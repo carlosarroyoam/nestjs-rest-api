@@ -3,7 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
+import { UsuariosModule } from './usuarios/usuarios.module';
+console.log(__dirname);
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -19,11 +20,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         extra: {
           connectionLimit: configService.get('DATABASE_POOL_SIZE'),
         },
-        entities: [__dirname + './**/*.entity{.ts,.js}'],
-        synchronize: false,
+        autoLoadEntities: true,
+        synchronize: false, // Setting synchronize: true shouldn't be used in production.
       }),
       inject: [ConfigService],
     }),
+    UsuariosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

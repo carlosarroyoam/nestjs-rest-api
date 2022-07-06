@@ -17,6 +17,7 @@ async function bootstrap() {
     .setDescription('MACUDECAM API description')
     .setVersion('1.0')
     .addTag('auth')
+    .addTag('usuarios')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
