@@ -14,7 +14,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('MACUDECAM')
-    .setDescription('MACUDECAM API description')
+    .setDescription('Especificación de la API para el sistema MACUDECAM.')
     .setVersion('1.0')
     .addTag('auth')
     .addTag('usuarios')
