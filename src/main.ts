@@ -12,6 +12,8 @@ async function bootstrap() {
     origin: ['http://localhost:4200'],
   });
 
+  app.setGlobalPrefix('api', { exclude: [''] });
+
   app.use(helmet());
   app.use(compression());
 
