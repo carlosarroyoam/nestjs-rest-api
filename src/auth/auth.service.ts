@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
 import { Repository } from 'typeorm';
@@ -7,7 +12,8 @@ import { Repository } from 'typeorm';
 export class AuthService {
   constructor(
     @InjectRepository(Usuario)
-    private usuariosRepository: Repository<Usuario>,
+    private readonly usuariosRepository: Repository<Usuario>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async validateUser(cuenta: string, contrasenia: string) {
@@ -16,25 +22,21 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new HttpException(
-        {
-          status: HttpStatus.NOT_FOUND,
-          error: 'El usuario no esta registrado',
-        },
-        HttpStatus.NOT_FOUND,
-      );
+      throw new NotFoundException('El usuario no esta registrado');
     }
 
     if (user.contrasenia !== contrasenia) {
-      throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          error: 'Credenciales incorrectas',
-        },
-        HttpStatus.FORBIDDEN,
-      );
+      throw new ForbiddenException('Credenciales incorrectas');
     }
 
     return user;
+  }
+
+  async login(usuario: Usuario) {
+    const payload = { cuenta: usuario.cuenta, sub: usuario.id };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 }
