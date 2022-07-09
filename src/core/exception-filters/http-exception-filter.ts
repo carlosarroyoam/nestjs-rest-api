@@ -3,22 +3,40 @@ import {
   Catch,
   ArgumentsHost,
   HttpException,
+  HttpStatus,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { HttpAdapterHost } from '@nestjs/core';
+import { getReasonPhrase } from 'http-status-codes';
 
-@Catch(HttpException)
+@Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  catch(exception: HttpException, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
-    const status = exception.getStatus();
+  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
-    response.status(status).json({
-      message: exception.message,
-      status: status,
-      path: request.url,
+  catch(exception: unknown, host: ArgumentsHost) {
+    const { httpAdapter } = this.httpAdapterHost;
+
+    const ctx = host.switchToHttp();
+
+    const httpStatusCode =
+      exception instanceof HttpException
+        ? exception.getStatus()
+        : HttpStatus.INTERNAL_SERVER_ERROR;
+
+    const httpMessage =
+      exception instanceof HttpException
+        ? exception.message
+        : 'El servidor encontró una condición inesperada que le impide completar la petición';
+
+    const reasonPhrase = getReasonPhrase(httpStatusCode);
+
+    const responseBody = {
+      message: httpMessage,
+      error: reasonPhrase,
+      status: httpStatusCode,
+      path: httpAdapter.getRequestUrl(ctx.getRequest()),
       timestamp: new Date().toISOString(),
-    });
+    };
+
+    httpAdapter.reply(ctx.getResponse(), responseBody, httpStatusCode);
   }
 }
