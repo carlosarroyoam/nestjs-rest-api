@@ -6,10 +6,9 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createHash } from 'crypto';
-import { promisify } from 'util';
+import { Repository } from 'typeorm';
 
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
-import { Repository } from 'typeorm';
 import { LoginResponseDto } from './dto/login-response.dto';
 
 @Injectable()
