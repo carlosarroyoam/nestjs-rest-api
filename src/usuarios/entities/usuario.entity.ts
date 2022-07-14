@@ -14,7 +14,7 @@ export class Usuario {
   @Column({ type: 'varchar', width: 60 })
   nombre_completo: string;
 
-  @Column({ type: 'char', width: 2 })
+  @Column({ type: 'varchar', width: 2 })
   iniciales: string;
 
   @Column({ type: 'varchar', width: 20 })
