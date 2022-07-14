@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { UsuarioResponseDto } from './dto/usuario-response.dto';
 import { Usuario } from './entities/usuario.entity';
 
 @Injectable()
@@ -16,7 +17,7 @@ export class UsuariosService {
     return 'This action adds a new usuario';
   }
 
-  async findAll() {
+  async findAll(): Promise<UsuarioResponseDto[]> {
     const usuarios: Usuario[] = await this.usersRepository.find({
       order: {
         id: 'ASC',
@@ -26,7 +27,7 @@ export class UsuariosService {
     return usuarios;
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<UsuarioResponseDto> {
     const usuario: Usuario = await this.usersRepository.findOne({
       where: { id },
     });
