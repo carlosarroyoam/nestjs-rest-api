@@ -5,10 +5,10 @@ export class Usuario {
   @PrimaryColumn()
   id: number;
 
-  @Column({ type: 'char', width: 20 })
+  @Column({ type: 'varchar', width: 20 })
   cuenta: string;
 
-  @Column({ type: 'char', width: 60 })
+  @Column({ type: 'varchar', width: 60 })
   contrasenia: string;
 
   @Column({ type: 'varchar', width: 60 })
@@ -17,10 +17,10 @@ export class Usuario {
   @Column({ type: 'char', width: 2 })
   iniciales: string;
 
-  @Column({ type: 'char', width: 20 })
+  @Column({ type: 'varchar', width: 20 })
   permisos_menus: string;
 
-  @Column({ type: 'char', width: 20 })
+  @Column({ type: 'varchar', width: 20 })
   permisos_acciones: string;
 
   @Column({ type: 'boolean' })
