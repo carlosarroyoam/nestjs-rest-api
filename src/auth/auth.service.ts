@@ -10,6 +10,7 @@ import { promisify } from 'util';
 
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
 import { Repository } from 'typeorm';
+import { LoginResponseDto } from './dto/login-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -39,10 +40,11 @@ export class AuthService {
     return user;
   }
 
-  async login(usuario: Usuario) {
+  async login(usuario: Usuario): Promise<LoginResponseDto> {
     const payload = { cuenta: usuario.cuenta, sub: usuario.id };
 
     return {
+      id: usuario.id,
       access_token: this.jwtService.sign(payload),
     };
   }
