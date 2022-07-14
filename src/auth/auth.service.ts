@@ -5,6 +5,9 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { createHash } from 'crypto';
+import { promisify } from 'util';
+
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
 import { Repository } from 'typeorm';
 
@@ -25,7 +28,11 @@ export class AuthService {
       throw new NotFoundException('El usuario no esta registrado');
     }
 
-    if (user.contrasenia !== contrasenia) {
+    const contraseniaEncriptada = createHash('md5')
+      .update(contrasenia)
+      .digest('hex');
+
+    if (contraseniaEncriptada !== user.contrasenia) {
       throw new ForbiddenException('Credenciales incorrectas');
     }
 
