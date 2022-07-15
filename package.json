@@ -30,6 +30,7 @@
     "@nestjs/swagger": "^5.2.1",
     "@nestjs/typeorm": "^8.1.4",
     "class-transformer": "^0.5.1",
+    "class-validator": "^0.13.2",
     "compression": "^1.7.4",
     "helmet": "^5.1.0",
     "http-status-codes": "^2.2.0",

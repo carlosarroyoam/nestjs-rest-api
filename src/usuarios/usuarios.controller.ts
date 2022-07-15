@@ -41,20 +41,20 @@ export class UsuariosController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const usuarioPorId: Usuario = await this.usuariosService.findOne(+id);
+  async findOne(@Param('id') id: number) {
+    const usuarioPorId: Usuario = await this.usuariosService.findOne(id);
     const usuarioDto = plainToClass(UsuarioResponseDto, usuarioPorId);
 
     return usuarioDto;
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
-    return this.usuariosService.update(+id, updateUsuarioDto);
+  update(@Param('id') id: number, @Body() updateUsuarioDto: UpdateUsuarioDto) {
+    return this.usuariosService.update(id, updateUsuarioDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usuariosService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.usuariosService.remove(id);
   }
 }

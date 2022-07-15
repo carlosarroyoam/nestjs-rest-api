@@ -1,9 +1,10 @@
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
-import helmet from 'helmet';
+import { ValidationPipe } from '@nestjs/common';
 import * as compression from 'compression';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,6 +14,12 @@ async function bootstrap() {
   });
 
   app.setGlobalPrefix('api', { exclude: [''] });
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+    }),
+  );
 
   app.use(helmet());
   app.use(compression());
