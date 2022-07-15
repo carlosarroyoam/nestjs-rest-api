@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
-import { UsuarioResponseDto } from './dto/usuario-response.dto';
 import { Usuario } from './entities/usuario.entity';
 
 @Injectable()
@@ -18,7 +17,7 @@ export class UsuariosService {
     return 'This action adds a new usuario';
   }
 
-  async findAll(): Promise<UsuarioResponseDto[]> {
+  async findAll(): Promise<Usuario[]> {
     const usuarios: Usuario[] = await this.usersRepository.find({
       order: {
         id: 'ASC',
@@ -28,7 +27,7 @@ export class UsuariosService {
     return usuarios;
   }
 
-  async findOne(id: number): Promise<UsuarioResponseDto> {
+  async findOne(id: number): Promise<Usuario> {
     const usuario: Usuario = await this.usersRepository.findOne({
       where: { id },
     });
