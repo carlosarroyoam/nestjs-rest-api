@@ -9,6 +9,7 @@ import {
 import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
+import { LoginDto } from './dto/login.dto';
 import { LocalAuthGuard } from './guards/local-guard';
 
 @Controller('auth')
@@ -20,15 +21,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse()
-  @ApiBody({
-    type: 'object',
-    schema: {
-      properties: {
-        cuenta: { type: 'string' },
-        contrasenia: { type: 'string' },
-      },
-    },
-  })
+  @ApiBody({ type: LoginDto })
   async login(@Request() request) {
     return this.authService.login(request.user);
   }
