@@ -12,8 +12,4 @@ export class UsuarioResponseDto {
   usuario_tel: string;
   usuario_mail: string;
   reg_estatus: boolean;
-  reg_alta_id_usuarios: number;
-  reg_alta: Date;
-  reg_modifica_id_usuarios: number;
-  reg_modifica: Date;
 }
