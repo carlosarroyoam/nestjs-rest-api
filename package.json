@@ -1,7 +1,7 @@
 {
   "name": "macudecam",
   "version": "0.0.1",
-  "description": "",
+  "description": "API para el sistema MACUDECAM",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
