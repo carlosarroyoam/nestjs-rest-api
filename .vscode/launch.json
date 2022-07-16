@@ -19,6 +19,7 @@
       "sourceMaps": true,
       "cwd": "${workspaceRoot}",
       "console": "integratedTerminal",
+      "autoAttachChildProcesses": true,
       "skipFiles": ["<node_internals>/**", "${workspaceFolder}/node_modules/**"]
     }
   ]

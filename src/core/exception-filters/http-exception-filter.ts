@@ -57,7 +57,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       return exception.getResponse() as {
         statusCode?: number;
-        message?: string | string[];
+        message?: string;
         details?: object;
         error?: string;
       };
