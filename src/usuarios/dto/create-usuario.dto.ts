@@ -3,6 +3,10 @@ import { IsNotEmpty } from 'class-validator';
 
 export class CreateUsuarioDto {
   @IsNotEmpty()
-  @ApiProperty({ required: true })
+  @ApiProperty()
   cuenta: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  contrasenia: string;
 }

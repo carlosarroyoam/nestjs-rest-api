@@ -2,7 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import { ValidationError } from 'class-validator';
 import * as compression from 'compression';
 import helmet from 'helmet';
 
@@ -18,6 +19,17 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
+      exceptionFactory: (errors: ValidationError[]) => {
+        return new BadRequestException({
+          message: 'Error de validación',
+          details: errors.map((item) => {
+            return {
+              property: item.property,
+              message: Object.values(item.constraints).pop(),
+            };
+          }),
+        });
+      },
     }),
   );
 

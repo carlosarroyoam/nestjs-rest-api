@@ -29,8 +29,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     const reasonPhrase = getReasonPhrase(httpStatusCode);
 
+    const errorDetails = this.getExceptionDetails(exception);
+
     const responseBody = {
       message: httpMessage,
+      details: errorDetails,
       error: reasonPhrase,
       status: httpStatusCode,
       path: httpAdapter.getRequestUrl(ctx.getRequest()),
@@ -38,5 +41,28 @@ export class HttpExceptionFilter implements ExceptionFilter {
     };
 
     httpAdapter.reply(ctx.getResponse(), responseBody, httpStatusCode);
+  }
+
+  getExceptionDetails(exception: unknown) {
+    const originalResponse = this.getOriginalResponse(exception);
+
+    if (originalResponse?.details) {
+      return originalResponse.details;
+    }
+
+    return undefined;
+  }
+
+  getOriginalResponse(exception: unknown) {
+    if (exception instanceof HttpException) {
+      return exception.getResponse() as {
+        statusCode?: number;
+        message?: string | string[];
+        details?: object;
+        error?: string;
+      };
+    }
+
+    return undefined;
   }
 }
