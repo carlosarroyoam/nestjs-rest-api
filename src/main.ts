@@ -7,6 +7,8 @@ import { ValidationError } from 'class-validator';
 import * as compression from 'compression';
 import helmet from 'helmet';
 
+declare const module: any;
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -50,6 +52,11 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   await app.listen(3000);
+
+  if (module.hot) {
+    module.hot.accept();
+    module.hot.dispose(() => app.close());
+  }
 }
 
 bootstrap();
