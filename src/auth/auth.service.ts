@@ -25,7 +25,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new NotFoundException('El usuario no esta registrado');
+      throw new NotFoundException('Usuario no encontrado');
     }
 
     const contraseniaEncriptada = createHash('md5')
@@ -33,7 +33,7 @@ export class AuthService {
       .digest('hex');
 
     if (contraseniaEncriptada !== user.contrasenia) {
-      throw new ForbiddenException('Credenciales incorrectas');
+      throw new ForbiddenException('Contraseña incorrecta');
     }
 
     return user;
