@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { plainToClass } from 'class-transformer';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-guard';
 
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
@@ -34,7 +34,7 @@ export class UsuariosController {
   async findAll() {
     const usuarios: Usuario[] = await this.usuariosService.findAll();
     const usuariosDto = usuarios.map((usuario) =>
-      plainToClass(UsuarioResponseDto, usuario),
+      plainToClass(UsuarioResponseDto, usuario)
     );
 
     return usuariosDto;

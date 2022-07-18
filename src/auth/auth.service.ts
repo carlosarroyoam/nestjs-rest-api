@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { createHash } from 'crypto';
 import { Repository } from 'typeorm';
 
-import { Usuario } from 'src/usuarios/entities/usuario.entity';
+import { Usuario } from '../usuarios/entities/usuario.entity';
 import { LoginResponseDto } from './dto/login-response.dto';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class AuthService {
   constructor(
     @InjectRepository(Usuario)
     private readonly usuariosRepository: Repository<Usuario>,
-    private readonly jwtService: JwtService,
+    private readonly jwtService: JwtService
   ) {}
 
   async validateUser(cuenta: string, contrasenia: string) {

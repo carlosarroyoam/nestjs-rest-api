@@ -10,7 +10,7 @@ import { Usuario } from './entities/usuario.entity';
 export class UsuariosService {
   constructor(
     @InjectRepository(Usuario)
-    private usersRepository: Repository<Usuario>,
+    private usersRepository: Repository<Usuario>
   ) {}
 
   create(createUsuarioDto: CreateUsuarioDto) {

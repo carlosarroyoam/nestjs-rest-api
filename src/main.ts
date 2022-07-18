@@ -32,7 +32,7 @@ async function bootstrap() {
           }),
         });
       },
-    }),
+    })
   );
 
   app.use(helmet());
