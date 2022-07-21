@@ -6,5 +6,6 @@
     "source.organizeImports": true
   },
   "eslint.validate": ["javascript", "typescript"],
-  "files.eol": "\n"
+  "files.eol": "\n",
+  "npm.exclude": ["**\\dist"]
 }
