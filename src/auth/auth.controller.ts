@@ -9,6 +9,7 @@ import {
 import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
+import { LoginResponseDto } from './dto/login-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { LocalAuthGuard } from './guards/local-guard';
 
@@ -22,7 +23,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse()
   @ApiBody({ type: LoginDto })
-  async login(@Request() request) {
+  async login(@Request() request): Promise<LoginResponseDto> {
     return this.authService.login(request.user);
   }
 }

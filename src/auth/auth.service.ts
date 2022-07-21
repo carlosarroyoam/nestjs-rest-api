@@ -19,7 +19,7 @@ export class AuthService {
     private readonly jwtService: JwtService
   ) {}
 
-  async validateUser(cuenta: string, contrasenia: string) {
+  async validateUser(cuenta: string, contrasenia: string): Promise<Usuario> {
     const user: Usuario = await this.usuariosRepository.findOne({
       where: { cuenta },
     });

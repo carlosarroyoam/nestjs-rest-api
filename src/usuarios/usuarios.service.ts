@@ -10,15 +10,15 @@ import { Usuario } from './entities/usuario.entity';
 export class UsuariosService {
   constructor(
     @InjectRepository(Usuario)
-    private usersRepository: Repository<Usuario>
+    private readonly usersRepository: Repository<Usuario>
   ) {}
 
-  create(createUsuarioDto: CreateUsuarioDto) {
+  create(createUsuarioDto: CreateUsuarioDto): string {
     return 'This action adds a new usuario';
   }
 
   async findAll(): Promise<Usuario[]> {
-    const usuarios: Usuario[] = await this.usersRepository.find({
+    const usuarios = await this.usersRepository.find({
       order: {
         id: 'ASC',
       },
@@ -35,11 +35,11 @@ export class UsuariosService {
     return usuario;
   }
 
-  update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
+  update(id: number, updateUsuarioDto: UpdateUsuarioDto): string {
     return `This action updates a #${id} usuario`;
   }
 
-  remove(id: number) {
+  remove(id: number): string {
     return `This action removes a #${id} usuario`;
   }
 }
