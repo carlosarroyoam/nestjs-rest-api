@@ -21,6 +21,8 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
       exceptionFactory: (errors: ValidationError[]) => {
         return new BadRequestException({
           message: 'Error de validación',
