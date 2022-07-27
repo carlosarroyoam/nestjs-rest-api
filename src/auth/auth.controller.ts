@@ -6,7 +6,7 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { LoginResponseDto } from './dto/login-response.dto';
@@ -21,6 +21,7 @@ export class AuthController {
   @Post('login')
   @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Autentica a un usuario' })
   @ApiOkResponse()
   @ApiBody({ type: LoginDto })
   async login(@Request() request): Promise<LoginResponseDto> {

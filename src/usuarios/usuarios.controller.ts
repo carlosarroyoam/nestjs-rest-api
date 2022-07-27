@@ -8,7 +8,12 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiExcludeEndpoint,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { plainToClass } from 'class-transformer';
 import { JwtAuthGuard } from '../auth/guards/jwt-guard';
 
@@ -26,11 +31,13 @@ export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
 
   @Post()
+  @ApiExcludeEndpoint()
   create(@Body() createUsuarioDto: CreateUsuarioDto): string {
     return this.usuariosService.create(createUsuarioDto);
   }
 
   @Get()
+  @ApiOperation({ summary: 'Obtiene la lista de usuarios' })
   async findAll(): Promise<UsuarioDto[]> {
     const usuarios: Usuario[] = await this.usuariosService.findAll();
     const usuariosDto = usuarios.map((usuario) =>
@@ -41,6 +48,7 @@ export class UsuariosController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Obtiene un usuario por su id' })
   async findOne(@Param('id') id: number): Promise<UsuarioDto> {
     const usuarioPorId: Usuario = await this.usuariosService.findOne(id);
     const usuarioDto = plainToClass(UsuarioDto, usuarioPorId);
@@ -49,6 +57,7 @@ export class UsuariosController {
   }
 
   @Patch(':id')
+  @ApiExcludeEndpoint()
   update(
     @Param('id') id: number,
     @Body() updateUsuarioDto: UpdateUsuarioDto
@@ -57,6 +66,7 @@ export class UsuariosController {
   }
 
   @Delete(':id')
+  @ApiExcludeEndpoint()
   remove(@Param('id') id: number): string {
     return this.usuariosService.remove(id);
   }
