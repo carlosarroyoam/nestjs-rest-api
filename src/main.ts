@@ -16,7 +16,7 @@ async function bootstrap() {
     origin: ['http://localhost:4200'],
   });
 
-  app.setGlobalPrefix('api', { exclude: [''] });
+  app.setGlobalPrefix('/api/v1', { exclude: [''] });
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -41,11 +41,11 @@ async function bootstrap() {
   app.use(compression());
 
   const config = new DocumentBuilder()
-    .setTitle('MACUDECAM')
-    .setDescription('Especificación de la API para el sistema MACUDECAM.')
+    .setTitle('nestjs-rest-api')
+    .setDescription('Nestjs Rest Api')
     .setVersion('1.0')
     .addTag('auth')
-    .addTag('usuarios')
+    .addTag('users')
     .addBearerAuth()
     .build();
 

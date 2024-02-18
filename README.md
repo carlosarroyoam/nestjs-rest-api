@@ -1,7 +1,3 @@
-## Description
-
-Back-end para el sistema MACUDECAM.
-
 ## Installation
 
 ```bash
@@ -36,4 +32,4 @@ $ npm run test:cov
 
 ## License
 
-macudecam-backend uses Nest which is [MIT licensed](LICENSE).
+nestjs-rest-api uses Nest which is [MIT licensed](LICENSE).

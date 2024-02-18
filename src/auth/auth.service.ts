@@ -5,45 +5,44 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { createHash } from 'crypto';
 import { Repository } from 'typeorm';
 
-import { Usuario } from '../usuarios/entities/usuario.entity';
+import * as bcrypt from 'bcrypt';
+import { User } from '../users/entities/user.entity';
 import { LoginResponseDto } from './dto/login-response.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(Usuario)
-    private readonly usuariosRepository: Repository<Usuario>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService
   ) {}
 
-  async validateUser(cuenta: string, contrasenia: string): Promise<Usuario> {
-    const user: Usuario = await this.usuariosRepository.findOne({
-      where: { cuenta },
-    });
+  async validateUser(username: string, password: string): Promise<User> {
+    const user = await this.userRepository.findOneBy({ username });
 
     if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
+      throw new NotFoundException('User not found');
     }
 
-    const contraseniaEncriptada = createHash('md5')
-      .update(contrasenia)
-      .digest('hex');
+    if (await bcrypt.compare(password, user.password)) {
+      throw new ForbiddenException('Invalid username or password');
+    }
 
-    if (contraseniaEncriptada !== user.contrasenia) {
-      throw new ForbiddenException('Contraseña incorrecta');
+    if (user.is_active === false) {
+      throw new ForbiddenException('User account not active');
     }
 
     return user;
   }
 
-  async login(usuario: Usuario): Promise<LoginResponseDto> {
-    const payload = { cuenta: usuario.cuenta, sub: usuario.id };
+  async login(user: User): Promise<LoginResponseDto> {
+    const payload = { username: user.username, sub: user.id };
 
     return {
-      id: usuario.id,
+      id: user.id,
+      username: user.username,
       access_token: this.jwtService.sign(payload),
     };
   }

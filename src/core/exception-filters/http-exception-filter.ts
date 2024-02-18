@@ -25,10 +25,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const httpMessage =
       exception instanceof HttpException
         ? exception.message
-        : 'El servidor encontró una condición inesperada que le impide completar la petición';
+        : 'Whoops! Something went wrong';
 
     const reasonPhrase = getReasonPhrase(httpStatusCode);
-
     const errorDetails = this.getExceptionDetails(exception);
 
     const responseBody = {

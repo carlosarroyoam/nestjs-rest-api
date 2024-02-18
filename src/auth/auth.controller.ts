@@ -21,7 +21,7 @@ export class AuthController {
   @Post('login')
   @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Autentica a un usuario' })
+  @ApiOperation({ summary: 'Auths a user' })
   @ApiOkResponse()
   @ApiBody({ type: LoginDto })
   async login(@Request() request): Promise<LoginResponseDto> {
