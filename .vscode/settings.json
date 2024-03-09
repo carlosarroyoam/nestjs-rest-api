@@ -6,6 +6,5 @@
     "source.organizeImports": "explicit"
   },
   "eslint.validate": ["javascript", "typescript"],
-  "files.eol": "\n",
   "npm.exclude": ["**\\dist"]
 }
