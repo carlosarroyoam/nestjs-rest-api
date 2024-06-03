@@ -1,8 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -22,11 +18,7 @@ export class AuthService {
   async validateUser(username: string, password: string): Promise<User> {
     const user = await this.userRepository.findOneBy({ username });
 
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    if (await bcrypt.compare(password, user.password)) {
+    if (!user || (await bcrypt.compare(password, user.password))) {
       throw new ForbiddenException('Invalid username or password');
     }
 

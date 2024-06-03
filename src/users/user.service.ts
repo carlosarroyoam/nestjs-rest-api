@@ -1,43 +1,104 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 
+import { plainToClass } from 'class-transformer';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserDto } from './dto/user.dto';
+import { Role } from './entities/role.entity';
 import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(Role)
+    private readonly roleRepository: Repository<Role>
   ) {}
 
-  create(createUserDto: CreateUserDto): string {
-    return 'This action adds a new user';
-  }
-
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<UserDto[]> {
     const users = await this.userRepository.find({
       order: {
         id: 'ASC',
       },
     });
 
-    return users;
+    return users.map((user) => plainToClass(UserDto, user));
   }
 
-  async findById(id: number): Promise<User> {
-    const user: User = await this.userRepository.findOneBy({ id });
-
-    return user;
+  async findById(id: number): Promise<UserDto> {
+    const userById = this.userRepository.findOneBy({ id });
+    return plainToClass(UserDto, userById);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto): string {
-    return `This action updates a #${id} user`;
+  async create(createUserDto: CreateUserDto): Promise<void> {
+    const userByUsername = await this.userRepository.findOneBy({
+      username: createUserDto.username,
+    });
+
+    if (userByUsername)
+      throw new BadRequestException('Username already exists');
+
+    const userByEmail = await this.userRepository.findOneBy({
+      email: createUserDto.email,
+    });
+
+    if (userByEmail) throw new BadRequestException('Email already exists');
+
+    const role = await this.roleRepository.findOneBy({
+      id: createUserDto.role_id,
+    });
+
+    const user = this.userRepository.create({
+      name: createUserDto.name,
+      age: createUserDto.age,
+      email: createUserDto.email,
+      username: createUserDto.username,
+      password: await bcrypt.hash(createUserDto.password, 10),
+      role: role,
+      is_active: false,
+      created_at: new Date(),
+      updated_at: new Date(),
+    });
+
+    await this.userRepository.insert(user);
   }
 
-  remove(id: number): string {
-    return `This action removes a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<void> {
+    const role = await this.roleRepository.findOneBy({
+      id: updateUserDto.role_id,
+    });
+
+    const userById = await this.userRepository.findOneBy({ id });
+
+    if (!userById) throw new NotFoundException('User not found');
+
+    await this.userRepository.update(userById.id, {
+      name: updateUserDto.name,
+      age: updateUserDto.age,
+      email: updateUserDto.email,
+      username: updateUserDto.username,
+      password: await bcrypt.hash(updateUserDto.password, 10),
+      role: role,
+      created_at: new Date(),
+      updated_at: new Date(),
+    });
+  }
+
+  async remove(id: number): Promise<void> {
+    const userById = await this.userRepository.findOneBy({ id });
+
+    if (!userById) throw new NotFoundException('User not found');
+
+    await this.userRepository.update(userById.id, {
+      is_active: false,
+    });
   }
 }

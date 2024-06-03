@@ -1,5 +1,6 @@
 import { BoolBitTransformer } from 'src/core/transformers/bool-byte.transformer';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Role } from './role.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -21,8 +22,9 @@ export class User {
   @Column({ type: 'varchar', width: 128, nullable: false })
   password: string;
 
-  @Column({ type: 'varchar', width: 32, nullable: false })
-  role: string;
+  @ManyToOne(() => Role, (role: Role) => role.users)
+  @JoinColumn({ name: 'role_id', referencedColumnName: 'id' })
+  role: Role;
 
   @Column({
     type: 'bit',
