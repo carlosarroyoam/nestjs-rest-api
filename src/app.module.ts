@@ -12,6 +12,7 @@ import { UserModule } from './users/user.module';
     ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'mysql',
         host: configService.get('DATABASE_HOST'),
@@ -25,13 +26,11 @@ import { UserModule } from './users/user.module';
         autoLoadEntities: true,
         synchronize: false, // Setting synchronize: true shouldn't be used in production.
       }),
-      inject: [ConfigService],
     }),
     CoreModule,
     AuthModule,
     UserModule,
   ],
   controllers: [AppController],
-  providers: [],
 })
 export class AppModule {}

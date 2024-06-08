@@ -37,12 +37,14 @@ export class UserController {
   }
 
   @Post()
+  @ApiOperation({ summary: 'Adds a new user' })
   async create(@Body() createUserDto: CreateUserDto): Promise<void> {
     await this.userService.create(createUserDto);
   }
 
   @Patch(':id')
   @HttpCode(204)
+  @ApiOperation({ summary: 'Updates a user by its id' })
   async update(
     @Param('id') id: number,
     @Body() updateUserDto: UpdateUserDto
@@ -52,6 +54,7 @@ export class UserController {
 
   @Delete(':id')
   @HttpCode(204)
+  @ApiOperation({ summary: 'Deletes a user by its id' })
   async remove(@Param('id') id: number): Promise<void> {
     await this.userService.remove(id);
   }

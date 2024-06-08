@@ -3,11 +3,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
+import { plainToClass } from 'class-transformer';
 import { Repository } from 'typeorm';
 
-import { plainToClass } from 'class-transformer';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
@@ -20,7 +21,8 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(Role)
-    private readonly roleRepository: Repository<Role>
+    private readonly roleRepository: Repository<Role>,
+    private readonly configService: ConfigService
   ) {}
 
   async findAll(): Promise<UserDto[]> {
@@ -38,7 +40,7 @@ export class UserService {
     return plainToClass(UserDto, userById);
   }
 
-  async create(createUserDto: CreateUserDto): Promise<void> {
+  async create(createUserDto: CreateUserDto): Promise<UserDto> {
     const userByUsername = await this.userRepository.findOneBy({
       username: createUserDto.username,
     });
@@ -61,14 +63,19 @@ export class UserService {
       age: createUserDto.age,
       email: createUserDto.email,
       username: createUserDto.username,
-      password: await bcrypt.hash(createUserDto.password, 10),
+      password: await bcrypt.hash(
+        createUserDto.password,
+        this.configService.get('SALT_ROUNDS')
+      ),
       role: role,
       is_active: false,
       created_at: new Date(),
       updated_at: new Date(),
     });
 
-    await this.userRepository.insert(user);
+    const createdUser = await this.userRepository.insert(user);
+
+    return plainToClass(UserDto, createdUser);
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<void> {
@@ -85,7 +92,10 @@ export class UserService {
       age: updateUserDto.age,
       email: updateUserDto.email,
       username: updateUserDto.username,
-      password: await bcrypt.hash(updateUserDto.password, 10),
+      password: await bcrypt.hash(
+        updateUserDto.password,
+        this.configService.get('SALT_ROUNDS')
+      ),
       role: role,
       created_at: new Date(),
       updated_at: new Date(),
