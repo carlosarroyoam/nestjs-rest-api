@@ -1,9 +1,9 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 
-import * as bcrypt from 'bcrypt';
 import { User } from '../users/entities/user.entity';
 import { LoginResponseDto } from './dto/login-response.dto';
 

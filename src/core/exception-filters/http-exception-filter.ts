@@ -19,8 +19,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const { httpAdapter } = this.httpAdapterHost;
     const ctx = host.switchToHttp();
 
-    this.logger.error(exception);
-
     const httpStatusCode =
       exception instanceof HttpException
         ? exception.getStatus()
@@ -30,6 +28,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
       exception instanceof HttpException
         ? exception.message
         : 'Whoops! Something went wrong';
+
+    if (httpStatusCode === HttpStatus.INTERNAL_SERVER_ERROR) {
+      this.logger.error(exception);
+    } else {
+      this.logger.warn(exception);
+    }
 
     const reasonPhrase = getReasonPhrase(httpStatusCode);
     const errorDetails = this.getExceptionDetails(exception);

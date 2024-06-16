@@ -1,22 +1,24 @@
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppModule } from './app.module';
-
-import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
 import * as compression from 'compression';
 import helmet from 'helmet';
+
+import { AppModule } from './app.module';
 
 declare const module: any;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.use(helmet());
+  app.use(compression());
+  app.setGlobalPrefix('/api/v1', { exclude: [''] });
+
   app.enableCors({
     origin: ['http://localhost:4200'],
   });
-
-  app.setGlobalPrefix('/api/v1', { exclude: [''] });
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -37,19 +39,21 @@ async function bootstrap() {
     })
   );
 
-  app.use(helmet());
-  app.use(compression());
-
-  const config = new DocumentBuilder()
-    .setTitle('nestjs-rest-api')
-    .setDescription('Nestjs Rest Api')
-    .setVersion('1.0')
-    .addTag('auth')
-    .addTag('users')
-    .addBearerAuth()
-    .build();
-
-  SwaggerModule.setup('docs', app, SwaggerModule.createDocument(app, config));
+  SwaggerModule.setup(
+    'docs',
+    app,
+    SwaggerModule.createDocument(
+      app,
+      new DocumentBuilder()
+        .setTitle('nestjs-rest-api')
+        .setDescription('Nestjs Rest Api')
+        .setVersion('1.0')
+        .addTag('auth')
+        .addTag('users')
+        .addBearerAuth()
+        .build()
+    )
+  );
 
   await app.listen(3000);
 
