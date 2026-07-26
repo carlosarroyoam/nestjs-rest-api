@@ -1,6 +1,6 @@
 import { Controller, Get, Req } from '@nestjs/common';
 import { ApiExcludeController } from '@nestjs/swagger';
-import { Request } from 'express';
+import type { Request } from 'express';
 
 import * as packageJson from '../package.json';
 

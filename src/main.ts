@@ -2,7 +2,7 @@ import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationError } from 'class-validator';
-import * as compression from 'compression';
+import compression from 'compression';
 import helmet from 'helmet';
 
 import { AppModule } from './app.module';
@@ -31,12 +31,12 @@ async function bootstrap() {
           details: errors.map((item) => {
             return {
               property: item.property,
-              message: Object.values(item.constraints).pop(),
+              message: Object.values(item.constraints ?? {}).pop(),
             };
           }),
         });
       },
-    })
+    }),
   );
 
   SwaggerModule.setup(
@@ -51,8 +51,8 @@ async function bootstrap() {
         .addTag('auth')
         .addTag('users')
         .addBearerAuth()
-        .build()
-    )
+        .build(),
+    ),
   );
 
   await app.listen(3000);

@@ -1,10 +1,12 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import { Test, TestingModule } from '@nestjs/testing';
+import request from 'supertest';
+import { App } from 'supertest/types';
+
 import { AppModule } from './../src/app.module';
 
 describe('AppController (e2e)', () => {
-  let app: INestApplication;
+  let app: INestApplication<App>;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -19,6 +21,19 @@ describe('AppController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/')
       .expect(200)
-      .expect('Hello World!');
+      .expect((response) => {
+        expect(response.body).toMatchObject({
+          name: 'nestjs-rest-api',
+          description: 'Nestjs Rest Api',
+          version: '0.0.1',
+        });
+        expect(response.body.documentation).toMatch(
+          /^http:\/\/127\.0\.0\.1:\d+\/docs$/,
+        );
+      });
+  });
+
+  afterEach(async () => {
+    await app.close();
   });
 });

@@ -15,16 +15,18 @@ import { UserModule } from './users/user.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'mysql',
-        host: configService.get('DATABASE_HOST'),
-        port: configService.get('DATABASE_PORT'),
-        username: configService.get('DATABASE_USERNAME'),
-        password: configService.get('DATABASE_PASSWORD'),
-        database: configService.get('DATABASE_NAME'),
+        host: configService.getOrThrow<string>('DATABASE_HOST'),
+        port: Number(configService.getOrThrow<string>('DATABASE_PORT')),
+        username: configService.getOrThrow<string>('DATABASE_USERNAME'),
+        password: configService.getOrThrow<string>('DATABASE_PASSWORD'),
+        database: configService.getOrThrow<string>('DATABASE_NAME'),
         extra: {
-          connectionLimit: configService.get('DATABASE_POOL_SIZE'),
+          connectionLimit: Number(
+            configService.getOrThrow<string>('DATABASE_POOL_SIZE'),
+          ),
         },
         autoLoadEntities: true,
-        synchronize: false, // Setting synchronize: true shouldn't be used in production.
+        synchronize: false,
       }),
     }),
     CoreModule,

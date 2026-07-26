@@ -6,10 +6,10 @@ export class Role {
   @PrimaryColumn()
   id: number;
 
-  @Column({ type: 'varchar', width: 32, nullable: false })
+  @Column('varchar', { length: 32, nullable: false })
   title: string;
 
-  @Column({ type: 'varchar', width: 128, nullable: false })
+  @Column('varchar', { length: 128, nullable: false })
   description: string;
 
   @OneToMany(() => User, (user: User) => user.role)
