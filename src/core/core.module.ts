@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 
-import { HttpExceptionFilter } from './exception-filters/http-exception-filter';
+import { HttpExceptionFilter } from '@/core/exception-filters/http-exception-filter';
 
 @Module({
   providers: [

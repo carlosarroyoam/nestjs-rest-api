@@ -11,11 +11,11 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { JwtAuthGuard } from '../auth/guards/jwt-guard';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UserDto } from './dto/user.dto';
-import { UserService } from './user.service';
+import { JwtAuthGuard } from '@/features/auth/guards/jwt-guard';
+import { CreateUserDto } from '@/features/users/dto/create-user.dto';
+import { UpdateUserDto } from '@/features/users/dto/update-user.dto';
+import { UserDto } from '@/features/users/dto/user.dto';
+import { UserService } from '@/features/users/user.service';
 
 @Controller('/users')
 @UseGuards(JwtAuthGuard)
@@ -47,7 +47,7 @@ export class UserController {
   @ApiOperation({ summary: 'Updates a user by its id' })
   async update(
     @Param('id') id: number,
-    @Body() updateUserDto: UpdateUserDto
+    @Body() updateUserDto: UpdateUserDto,
   ): Promise<void> {
     await this.userService.update(id, updateUserDto);
   }

@@ -9,11 +9,11 @@ import * as bcrypt from 'bcrypt';
 import { plainToClass } from 'class-transformer';
 import { Repository } from 'typeorm';
 
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UserDto } from './dto/user.dto';
-import { Role } from './entities/role.entity';
-import { User } from './entities/user.entity';
+import { CreateUserDto } from '@/features/users/dto/create-user.dto';
+import { UpdateUserDto } from '@/features/users/dto/update-user.dto';
+import { UserDto } from '@/features/users/dto/user.dto';
+import { Role } from '@/features/users/entities/role.entity';
+import { User } from '@/features/users/entities/user.entity';
 
 @Injectable()
 export class UserService {

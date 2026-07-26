@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AppController } from './app.controller';
-import { AuthModule } from './features/auth/auth.module';
-import { CoreModule } from './core/core.module';
-import { UserModule } from './features/users/user.module';
+import { AppController } from '@/app.controller';
+import { CoreModule } from '@/core/core.module';
+import { AuthModule } from '@/features/auth/auth.module';
+import { UserModule } from '@/features/users/user.module';
 
 @Module({
   imports: [

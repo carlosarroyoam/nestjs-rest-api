@@ -4,8 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 
-import { User } from '../users/entities/user.entity';
-import { LoginResponseDto } from './dto/login-response.dto';
+import { LoginResponseDto } from '@/features/auth/dto/login-response.dto';
+import { User } from '@/features/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {

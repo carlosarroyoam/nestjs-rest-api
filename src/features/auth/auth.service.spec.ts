@@ -1,9 +1,9 @@
 import { JwtService } from '@nestjs/jwt';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { User } from '../users/entities/user.entity';
-import { AuthService } from './auth.service';
+import { AuthService } from '@/features/auth/auth.service';
+import { User } from '@/features/users/entities/user.entity';
 
 describe('AuthService', () => {
   let service: AuthService;

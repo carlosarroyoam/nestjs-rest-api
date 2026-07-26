@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { Role } from './entities/role.entity';
-import { User } from './entities/user.entity';
-import { UserController } from './user.controller';
-import { UserService } from './user.service';
+import { Role } from '@/features/users/entities/role.entity';
+import { User } from '@/features/users/entities/user.entity';
+import { UserController } from '@/features/users/user.controller';
+import { UserService } from '@/features/users/user.service';
 
 @Module({
   imports: [ConfigModule, TypeOrmModule.forFeature([User, Role])],

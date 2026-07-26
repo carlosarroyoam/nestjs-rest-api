@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
-import { BoolBitTransformer } from '../../../core/transformers/bool-byte.transformer';
-import { Role } from './role.entity';
+import { BoolBitTransformer } from '@/core/transformers/bool-byte.transformer';
+import { Role } from '@/features/users/entities/role.entity';
 
 @Entity({ name: 'users' })
 export class User {

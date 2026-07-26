@@ -8,10 +8,10 @@ import {
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { AuthService } from './auth.service';
-import { LoginResponseDto } from './dto/login-response.dto';
-import { LoginDto } from './dto/login.dto';
-import { LocalAuthGuard } from './guards/local-guard';
+import { AuthService } from '@/features/auth/auth.service';
+import { LoginResponseDto } from '@/features/auth/dto/login-response.dto';
+import { LoginDto } from '@/features/auth/dto/login.dto';
+import { LocalAuthGuard } from '@/features/auth/guards/local-guard';
 
 @Controller('auth')
 @ApiTags('auth')

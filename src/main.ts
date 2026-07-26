@@ -5,9 +5,7 @@ import { ValidationError } from 'class-validator';
 import compression from 'compression';
 import helmet from 'helmet';
 
-import { AppModule } from './app.module';
-
-declare const module: any;
+import { AppModule } from '@/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -56,11 +54,6 @@ async function bootstrap() {
   );
 
   await app.listen(3000);
-
-  if (module.hot) {
-    module.hot.accept();
-    module.hot.dispose(() => app.close());
-  }
 }
 
 bootstrap();

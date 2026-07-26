@@ -1,10 +1,10 @@
 import { ConfigService } from '@nestjs/config';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Role } from './entities/role.entity';
-import { User } from './entities/user.entity';
-import { UserService } from './user.service';
+import { Role } from '@/features/users/entities/role.entity';
+import { User } from '@/features/users/entities/user.entity';
+import { UserService } from '@/features/users/user.service';
 
 describe('UserService', () => {
   let service: UserService;
