@@ -64,4 +64,12 @@ describe('UserService', () => {
       'Role not found',
     );
   });
-});
+
+  it('does not expose the password in user responses', async () => {
+    userRepository.find.mockResolvedValue([{ id: 1, password: 'hashed-secret' }]);
+
+    const [user] = await service.findAll();
+
+    expect(user).toMatchObject({ id: 1 });
+    expect(user).not.toHaveProperty('password');
+  });});

@@ -5,14 +5,14 @@ import { User } from '@/features/users/entities/user.entity';
 @Entity({ name: 'roles' })
 export class Role {
   @PrimaryColumn()
-  id: number;
+  id!: number;
 
   @Column('varchar', { length: 32, nullable: false })
-  title: string;
+  type!: string;
 
   @Column('varchar', { length: 128, nullable: false })
-  description: string;
+  description!: string;
 
   @OneToMany(() => User, (user: User) => user.role)
-  users: User[];
+  users!: User[];
 }

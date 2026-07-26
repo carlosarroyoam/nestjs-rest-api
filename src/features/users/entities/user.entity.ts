@@ -6,36 +6,36 @@ import { Role } from '@/features/users/entities/role.entity';
 @Entity({ name: 'users' })
 export class User {
   @PrimaryColumn()
-  id: number;
+  id!: number;
 
   @Column('varchar', { length: 128, nullable: false })
-  name: string;
+  name!: string;
 
   @Column('tinyint')
-  age: number;
+  age!: number;
 
   @Column('varchar', { length: 128, nullable: false })
-  email: string;
+  email!: string;
 
   @Column('varchar', { length: 128, nullable: false })
-  username: string;
+  username!: string;
 
   @Column('varchar', { length: 128, nullable: false })
-  password: string;
+  password_hash!: string;
 
   @ManyToOne(() => Role, (role: Role) => role.users)
   @JoinColumn({ name: 'role_id', referencedColumnName: 'id' })
-  role: Role;
+  role!: Role;
 
   @Column('bit', {
     nullable: false,
     transformer: new BoolBitTransformer(),
   })
-  is_active: boolean;
+  is_active!: boolean;
 
   @Column('datetime', { nullable: false })
-  created_at: Date;
+  created_at!: Date;
 
   @Column('datetime', { nullable: false })
-  updated_at: Date;
+  updated_at!: Date;
 }

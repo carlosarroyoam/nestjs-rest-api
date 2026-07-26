@@ -6,7 +6,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
 
 import { CreateUserDto } from '@/features/users/dto/create-user.dto';
@@ -27,37 +27,38 @@ export class UserService {
 
   async findAll(): Promise<UserDto[]> {
     const users = await this.userRepository.find({ order: { id: 'ASC' } });
-    return users.map((user) => plainToClass(UserDto, user));
+    return users.map((user) =>
+      plainToInstance(UserDto, user, { excludeExtraneousValues: true }),
+    );
   }
 
-  async findById(id: number): Promise<UserDto> {
-    const user = await this.userRepository.findOneBy({ id });
-    return plainToClass(UserDto, user);
+  async findById(userId: number): Promise<UserDto> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) throw new NotFoundException('User not found');
+    return plainToInstance(UserDto, user, { excludeExtraneousValues: true });
   }
 
-  async create(createUserDto: CreateUserDto): Promise<UserDto> {
-    if (
-      await this.userRepository.findOneBy({ username: createUserDto.username })
-    ) {
+  async create(request: CreateUserDto): Promise<UserDto> {
+    if (await this.userRepository.findOneBy({ username: request.username })) {
       throw new BadRequestException('Username already exists');
     }
 
-    if (await this.userRepository.findOneBy({ email: createUserDto.email })) {
+    if (await this.userRepository.findOneBy({ email: request.email })) {
       throw new BadRequestException('Email already exists');
     }
 
     const role = await this.roleRepository.findOneBy({
-      id: createUserDto.role_id,
+      id: request.role_id,
     });
     if (!role) throw new BadRequestException('Role not found');
 
     const user = this.userRepository.create({
-      name: createUserDto.name,
-      age: createUserDto.age,
-      email: createUserDto.email,
-      username: createUserDto.username,
-      password: await bcrypt.hash(
-        createUserDto.password,
+      name: request.name,
+      age: request.age,
+      email: request.email,
+      username: request.username,
+      password_hash: await bcrypt.hash(
+        request.password,
         Number(this.configService.getOrThrow<string>('SALT_ROUNDS')),
       ),
       role,
@@ -67,32 +68,34 @@ export class UserService {
     });
 
     const createdUser = await this.userRepository.insert(user);
-    return plainToClass(UserDto, createdUser);
+    return plainToInstance(UserDto, createdUser, {
+      excludeExtraneousValues: true,
+    });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<void> {
-    const user = await this.userRepository.findOneBy({ id });
+  async update(userId: number, request: UpdateUserDto): Promise<void> {
+    const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) throw new NotFoundException('User not found');
 
     let role: Role | undefined;
-    if (updateUserDto.role_id !== undefined) {
+    if (request.role_id !== undefined) {
       const requestedRole = await this.roleRepository.findOneBy({
-        id: updateUserDto.role_id,
+        id: request.role_id,
       });
       if (!requestedRole) throw new BadRequestException('Role not found');
       role = requestedRole;
     }
 
-    await this.userRepository.update(id, {
-      ...(updateUserDto.name !== undefined && { name: updateUserDto.name }),
-      ...(updateUserDto.age !== undefined && { age: updateUserDto.age }),
-      ...(updateUserDto.email !== undefined && { email: updateUserDto.email }),
-      ...(updateUserDto.username !== undefined && {
-        username: updateUserDto.username,
+    await this.userRepository.update(userId, {
+      ...(request.name !== undefined && { name: request.name }),
+      ...(request.age !== undefined && { age: request.age }),
+      ...(request.email !== undefined && { email: request.email }),
+      ...(request.username !== undefined && {
+        username: request.username,
       }),
-      ...(updateUserDto.password !== undefined && {
-        password: await bcrypt.hash(
-          updateUserDto.password,
+      ...(request.password !== undefined && {
+        password_hash: await bcrypt.hash(
+          request.password,
           Number(this.configService.getOrThrow<string>('SALT_ROUNDS')),
         ),
       }),
@@ -101,10 +104,9 @@ export class UserService {
     });
   }
 
-  async remove(id: number): Promise<void> {
-    const user = await this.userRepository.findOneBy({ id });
+  async remove(userId: number): Promise<void> {
+    const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) throw new NotFoundException('User not found');
-
-    await this.userRepository.update(id, { is_active: false });
+    await this.userRepository.update(userId, { is_active: false });
   }
 }
