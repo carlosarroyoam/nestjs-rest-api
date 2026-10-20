@@ -7,6 +7,23 @@ import helmet from 'helmet';
 
 import { AppModule } from '@/app.module';
 
+function flattenValidationErrors(
+  errors: ValidationError[],
+  parentPath = '',
+): { property: string; message?: string }[] {
+  return errors.flatMap((item) => {
+    const property = parentPath
+      ? `${parentPath}.${item.property}`
+      : item.property;
+
+    if (item.children?.length) {
+      return flattenValidationErrors(item.children, property);
+    }
+
+    return [{ property, message: Object.values(item.constraints ?? {}).pop() }];
+  });
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -26,12 +43,7 @@ async function bootstrap() {
       exceptionFactory: (errors: ValidationError[]) => {
         return new BadRequestException({
           message: 'Error de validación',
-          details: errors.map((item) => {
-            return {
-              property: item.property,
-              message: Object.values(item.constraints ?? {}).pop(),
-            };
-          }),
+          errors: flattenValidationErrors(errors),
         });
       },
     }),
@@ -56,4 +68,4 @@ async function bootstrap() {
   await app.listen(3000);
 }
 
-bootstrap();
+void bootstrap();
