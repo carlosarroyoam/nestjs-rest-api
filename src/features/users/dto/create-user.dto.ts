@@ -1,5 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 
+/** Datos para crear un usuario. Todos los campos son obligatorios. */
 export class CreateUserDto {
   @IsNotEmpty()
   name!: string;

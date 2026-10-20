@@ -10,7 +10,7 @@ import { HttpAdapterHost } from '@nestjs/core';
 import { Request, Response } from 'express';
 import { getReasonPhrase } from 'http-status-codes';
 
-/** Problem Details object, see RFC 9457. Extension members: `errors`. */
+/** Cuerpo de las respuestas de error, según Problem Details (RFC 9457). */
 export interface ProblemDetails {
   type: string;
   title: string;
@@ -20,6 +20,7 @@ export interface ProblemDetails {
   errors?: unknown;
 }
 
+/** Datos de una excepción ya reducidos a lo que necesita la respuesta. */
 interface NormalizedException {
   status: number;
   message: string;
@@ -31,12 +32,27 @@ const DEFAULT_ERROR_MESSAGE = 'Whoops! Something went wrong';
 const CLIENT_ERROR_MIN = 400;
 const SERVER_ERROR_MIN = 500;
 
+/**
+ * Filtro global que captura cualquier excepción y responde con
+ * `application/problem+json` (RFC 9457).
+ */
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(GlobalExceptionFilter.name);
 
+  /**
+   * @param httpAdapterHost Acceso al adaptador HTTP, para responder sin
+   * depender de Express directamente.
+   */
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
+  /**
+   * Registra la excepción y envía la respuesta de error.
+   *
+   * @param exception Excepción capturada, de cualquier tipo.
+   * @param host Contexto de ejecución, del que se obtienen la petición y la
+   * respuesta HTTP.
+   */
   catch(exception: unknown, host: ArgumentsHost): void {
     const { httpAdapter } = this.httpAdapterHost;
     const ctx = host.switchToHttp();
@@ -57,8 +73,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     }
 
     const problem: ProblemDetails = {
-      // "about:blank" means no semantics beyond the HTTP status, so `title`
-      // must be the status' reason phrase (RFC 9457, section 4.2.1).
+      // "about:blank" no aporta semántica más allá del estado HTTP, por lo que
+      // `title` debe ser la frase de razón del estado (RFC 9457, sección
+      // 4.2.1).
       type: 'about:blank',
       title: this.getReasonPhrase(status),
       status,
@@ -71,6 +88,12 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     httpAdapter.reply(response, problem, status);
   }
 
+  /**
+   * Reduce una excepción al estado, mensaje y errores que se envían al cliente.
+   *
+   * @param exception Excepción capturada.
+   * @returns Datos listos para construir la respuesta.
+   */
   private normalize(exception: unknown): NormalizedException {
     if (exception instanceof HttpException) {
       const response = exception.getResponse();
@@ -85,8 +108,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       };
     }
 
-    // Errors raised outside Nest (e.g. body-parser: malformed JSON, payload too large)
-    // are http-errors, not HttpException, and flag their client errors with `expose`.
+    // Los errores generados fuera de Nest (por ejemplo, body-parser: JSON mal
+    // formado o cuerpo demasiado grande) son http-errors, no HttpException, y
+    // marcan sus errores de cliente con `expose`.
     if (this.isExposedHttpError(exception)) {
       return {
         status: exception.statusCode ?? exception.status,
@@ -100,6 +124,13 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     };
   }
 
+  /**
+   * Indica si la excepción es un error HTTP de cliente (`expose === true` y
+   * estado 4xx) cuyo mensaje se puede mostrar al cliente.
+   *
+   * @param exception Excepción capturada.
+   * @returns `true` si es un error HTTP expuesto.
+   */
   private isExposedHttpError(exception: unknown): exception is Error & {
     expose: true;
     statusCode: number;
@@ -124,6 +155,15 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     );
   }
 
+  /**
+   * Registra la excepción: como `error` con el stack si el estado es 5xx, y
+   * como `warn` en los demás casos.
+   *
+   * @param exception Excepción original.
+   * @param status Código de estado HTTP que se responde.
+   * @param message Mensaje que se envía al cliente.
+   * @param context Método y URL de la petición.
+   */
   private log(
     exception: unknown,
     status: number,
@@ -131,7 +171,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     context: string,
   ): void {
     if (status >= SERVER_ERROR_MIN) {
-      // Log the original error, not the sanitized message sent to the client.
+      // Se registra el error original, no el mensaje sanitizado que se envía
+      // al cliente.
       this.logger.error(
         `${context} - ${exception instanceof Error ? exception.message : String(exception)}`,
         exception instanceof Error ? exception.stack : undefined,
@@ -141,11 +182,17 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     }
   }
 
+  /**
+   * Obtiene la frase de razón de un código de estado HTTP.
+   *
+   * @param status Código de estado HTTP.
+   * @returns La frase de razón estándar, o `Error` si el código no es estándar.
+   */
   private getReasonPhrase(status: number): string {
     try {
       return getReasonPhrase(status);
     } catch {
-      // http-status-codes throws for non-standard status codes.
+      // http-status-codes lanza un error para códigos de estado no estándar.
       return 'Error';
     }
   }

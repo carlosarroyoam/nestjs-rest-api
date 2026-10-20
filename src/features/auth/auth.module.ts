@@ -11,6 +11,7 @@ import { JwtStrategy } from '@/features/auth/strategies/jwt.strategy';
 import { LocalStrategy } from '@/features/auth/strategies/local.strategy';
 import { User } from '@/features/users/entities/user.entity';
 
+/** Módulo de autenticación: configura JWT y las estrategias de Passport. */
 @Module({
   imports: [
     ConfigModule,

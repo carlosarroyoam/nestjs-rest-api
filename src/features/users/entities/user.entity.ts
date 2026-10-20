@@ -3,6 +3,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { BoolBitTransformer } from '@/core/transformers/bool-byte.transformer';
 import { Role } from '@/features/users/entities/role.entity';
 
+/** Usuario de la aplicación. Tabla `users`. */
 @Entity({ name: 'users' })
 export class User {
   @PrimaryColumn()

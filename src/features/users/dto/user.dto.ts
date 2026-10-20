@@ -1,5 +1,6 @@
 import { Expose } from 'class-transformer';
 
+/** Representación pública de un usuario en las respuestas de la API. */
 export class UserDto {
   @Expose()
   id!: number;

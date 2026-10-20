@@ -7,6 +7,14 @@ import helmet from 'helmet';
 
 import { AppModule } from '@/app.module';
 
+/**
+ * Convierte los errores anidados de `class-validator` en una lista plana, con
+ * rutas separadas por puntos para las propiedades anidadas (`address.city`).
+ *
+ * @param errors Errores de validación.
+ * @param parentPath Ruta de la propiedad padre. Vacía en el nivel superior.
+ * @returns Lista de `{ property, message }`, una por propiedad inválida.
+ */
 function flattenValidationErrors(
   errors: ValidationError[],
   parentPath = '',
@@ -24,6 +32,7 @@ function flattenValidationErrors(
   });
 }
 
+/** Configura e inicia la aplicación en el puerto 3000. */
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 

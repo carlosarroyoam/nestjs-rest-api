@@ -13,11 +13,18 @@ import { LoginResponseDto } from '@/features/auth/dto/login-response.dto';
 import { LoginDto } from '@/features/auth/dto/login.dto';
 import { LocalAuthGuard } from '@/features/auth/guards/local-guard';
 
+/** Endpoints de autenticación, en `/auth`. */
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  /**
+   * `POST /auth/login`. Inicia sesión con usuario y contraseña.
+   *
+   * @param request Petición HTTP, con el usuario autenticado en `user`.
+   * @returns Datos del usuario y el token JWT.
+   */
   @Post('login')
   @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)

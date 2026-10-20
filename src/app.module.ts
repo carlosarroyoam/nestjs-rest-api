@@ -7,6 +7,7 @@ import { CoreModule } from '@/core/core.module';
 import { AuthModule } from '@/features/auth/auth.module';
 import { UserModule } from '@/features/users/user.module';
 
+/** Módulo raíz: carga la configuración, conecta MySQL e importa los módulos. */
 @Module({
   imports: [
     ConfigModule.forRoot(),

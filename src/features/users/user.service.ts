@@ -15,6 +15,7 @@ import { UserDto } from '@/features/users/dto/user.dto';
 import { Role } from '@/features/users/entities/role.entity';
 import { User } from '@/features/users/entities/user.entity';
 
+/** Lógica de negocio de los usuarios: consulta, alta, actualización y baja. */
 @Injectable()
 export class UserService {
   constructor(
@@ -25,6 +26,11 @@ export class UserService {
     private readonly configService: ConfigService,
   ) {}
 
+  /**
+   * Obtiene todos los usuarios, ordenados por `id` ascendente.
+   *
+   * @returns Lista de usuarios.
+   */
   async findAll(): Promise<UserDto[]> {
     const users = await this.userRepository.find({ order: { id: 'ASC' } });
     return users.map((user) =>
@@ -32,12 +38,27 @@ export class UserService {
     );
   }
 
+  /**
+   * Obtiene un usuario por su identificador.
+   *
+   * @param userId Identificador del usuario.
+   * @returns El usuario encontrado.
+   * @throws NotFoundException Si no existe un usuario con ese `id`.
+   */
   async findById(userId: number): Promise<UserDto> {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) throw new NotFoundException('User not found');
     return plainToInstance(UserDto, user, { excludeExtraneousValues: true });
   }
 
+  /**
+   * Crea un usuario con la cuenta inactiva (`is_active = false`).
+   *
+   * @param request Datos del nuevo usuario.
+   * @returns El usuario creado.
+   * @throws BadRequestException Si el `username` o el `email` ya existen, o si
+   * el `role_id` no corresponde a un rol.
+   */
   async create(request: CreateUserDto): Promise<UserDto> {
     if (await this.userRepository.findOneBy({ username: request.username })) {
       throw new BadRequestException('Username already exists');
@@ -73,6 +94,17 @@ export class UserService {
     });
   }
 
+  /**
+   * Actualiza de forma parcial un usuario: solo modifica los campos presentes
+   * en `request`. Si se envía `password`, se guarda su nuevo hash. Siempre
+   * actualiza `updated_at`.
+   *
+   * @param userId Identificador del usuario.
+   * @param request Campos a modificar.
+   * @throws NotFoundException Si no existe un usuario con ese `id`.
+   * @throws BadRequestException Si se envía un `role_id` que no corresponde a
+   * un rol.
+   */
   async update(userId: number, request: UpdateUserDto): Promise<void> {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) throw new NotFoundException('User not found');
@@ -104,6 +136,13 @@ export class UserService {
     });
   }
 
+  /**
+   * Da de baja un usuario con borrado lógico: marca la cuenta como inactiva
+   * (`is_active = false`) y conserva el registro.
+   *
+   * @param userId Identificador del usuario.
+   * @throws NotFoundException Si no existe un usuario con ese `id`.
+   */
   async remove(userId: number): Promise<void> {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) throw new NotFoundException('User not found');

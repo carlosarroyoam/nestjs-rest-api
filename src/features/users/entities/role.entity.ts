@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 
 import { User } from '@/features/users/entities/user.entity';
 
+/** Rol que determina el perfil de un usuario. Tabla `roles`. */
 @Entity({ name: 'roles' })
 export class Role {
   @PrimaryColumn()
