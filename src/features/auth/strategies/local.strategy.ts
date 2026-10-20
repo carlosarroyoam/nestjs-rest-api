@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 
 import { AuthService } from '@/features/auth/auth.service';
+import { User } from '@/features/users/entities/user.entity';
 
 /** Estrategia de Passport que autentica con usuario y contraseña. */
 @Injectable()
@@ -20,7 +21,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
    * @throws ForbiddenException Si las credenciales son inválidas o la cuenta
    * está inactiva.
    */
-  async validate(username: string, password: string): Promise<any> {
+  async validate(username: string, password: string): Promise<User> {
     return this.authService.validateUser(username, password);
   }
 }

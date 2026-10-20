@@ -4,6 +4,16 @@ import type { Request } from 'express';
 
 import * as packageJson from '../package.json';
 
+/** Información de la aplicación que devuelve `GET /`. */
+export interface AppInfo {
+  name: string;
+  description: string;
+  author: string;
+  version: string;
+  licence: string;
+  documentation: string;
+}
+
 /**
  * Endpoint raíz de la API. No lleva el prefijo global `/api/v1` y no aparece en
  * Swagger.
@@ -19,7 +29,7 @@ export class AppController {
    * documentación (`/docs`).
    */
   @Get()
-  appInfo(@Req() req: Request) {
+  appInfo(@Req() req: Request): AppInfo {
     const apiUrl = `${req.protocol}://${req.get('Host')}${req.originalUrl}`;
 
     return {

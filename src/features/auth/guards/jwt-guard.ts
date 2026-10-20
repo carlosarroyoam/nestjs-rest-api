@@ -1,6 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
+import { AuthenticatedUser } from '@/features/auth/interfaces/authenticated-user.interface';
+
 /** Guard que exige un token JWT válido, validado con `JwtStrategy`. */
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -10,12 +12,14 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
    * @param err Error producido durante la autenticación, si lo hubo.
    * @param user Usuario devuelto por `JwtStrategy.validate`, si el token es
    * válido.
-   * @param info Información adicional de Passport. No se usa.
    * @returns El usuario autenticado.
    * @throws UnauthorizedException Si el token es inválido o no se envió. Si
    * hubo un error (`err`), lo relanza tal cual.
    */
-  handleRequest(err, user, _info) {
+  handleRequest<TUser = AuthenticatedUser>(
+    err: Error | null,
+    user: TUser | false,
+  ): TUser {
     if (err || !user) {
       throw err || new UnauthorizedException('Invalid access token');
     }

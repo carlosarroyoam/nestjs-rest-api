@@ -24,7 +24,7 @@ export class BoolBitTransformer implements ValueTransformer {
    * @returns `true` si el primer byte es `1`, `false` en otro caso, o `null` si
    * `value` es `null`.
    */
-  from(value: Buffer): boolean | null {
+  from(value: Buffer | null): boolean | null {
     if (value === null) {
       return null;
     }

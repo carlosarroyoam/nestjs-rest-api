@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 
 import { LoginResponseDto } from '@/features/auth/dto/login-response.dto';
+import { JwtPayload } from '@/features/auth/interfaces/jwt-payload.interface';
 import { User } from '@/features/users/entities/user.entity';
 
 /** Lógica de autenticación: valida credenciales y emite tokens JWT. */
@@ -49,8 +50,8 @@ export class AuthService {
    * @param user Usuario autenticado.
    * @returns Datos del usuario y el token JWT firmado.
    */
-  async login(user: User): Promise<LoginResponseDto> {
-    const payload = { username: user.username, sub: user.id };
+  login(user: User): LoginResponseDto {
+    const payload: JwtPayload = { username: user.username, sub: user.id };
 
     return {
       id: user.id,

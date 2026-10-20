@@ -1,4 +1,6 @@
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
+
+import { RoleDto } from '@/features/users/dto/role.dto';
 
 /** Representación pública de un usuario en las respuestas de la API. */
 export class UserDto {
@@ -18,7 +20,8 @@ export class UserDto {
   username!: string;
 
   @Expose()
-  role!: string;
+  @Type(() => RoleDto)
+  role!: RoleDto;
 
   @Expose()
   is_active!: boolean;

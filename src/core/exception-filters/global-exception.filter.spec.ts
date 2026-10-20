@@ -21,7 +21,7 @@ describe('GlobalExceptionFilter', () => {
   let errorLog: jest.SpyInstance;
   let warnLog: jest.SpyInstance;
 
-  const lastReply = () => {
+  const lastReply = (): { body: Record<string, unknown>; status: number } => {
     const [, body, status] = httpAdapter.reply.mock.calls[0] as [
       unknown,
       Record<string, unknown>,
@@ -39,8 +39,8 @@ describe('GlobalExceptionFilter', () => {
     response = { headersSent: false };
     host = {
       switchToHttp: () => ({
-        getRequest: () => ({ url: '/api/v1/users?page=2' }),
-        getResponse: () => response,
+        getRequest: (): { url: string } => ({ url: '/api/v1/users?page=2' }),
+        getResponse: (): { headersSent: boolean } => response,
       }),
     } as unknown as ArgumentsHost;
 

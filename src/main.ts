@@ -33,7 +33,7 @@ function flattenValidationErrors(
 }
 
 /** Configura e inicia la aplicación en el puerto 3000. */
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
   app.use(helmet());
@@ -49,7 +49,7 @@ async function bootstrap() {
       transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
-      exceptionFactory: (errors: ValidationError[]) => {
+      exceptionFactory: (errors: ValidationError[]): BadRequestException => {
         return new BadRequestException({
           message: 'Error de validación',
           errors: flattenValidationErrors(errors),

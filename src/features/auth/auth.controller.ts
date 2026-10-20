@@ -12,6 +12,7 @@ import { AuthService } from '@/features/auth/auth.service';
 import { LoginResponseDto } from '@/features/auth/dto/login-response.dto';
 import { LoginDto } from '@/features/auth/dto/login.dto';
 import { LocalAuthGuard } from '@/features/auth/guards/local-guard';
+import type { AuthenticatedRequest } from '@/features/auth/interfaces/authenticated-request.interface';
 
 /** Endpoints de autenticación, en `/auth`. */
 @Controller('auth')
@@ -30,7 +31,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Auths a user' })
   @ApiBody({ type: LoginDto })
-  async login(@Request() request): Promise<LoginResponseDto> {
+  login(@Request() request: AuthenticatedRequest): LoginResponseDto {
     return this.authService.login(request.user);
   }
 }

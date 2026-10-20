@@ -32,7 +32,10 @@ export class UserService {
    * @returns Lista de usuarios.
    */
   async findAll(): Promise<UserDto[]> {
-    const users = await this.userRepository.find({ order: { id: 'ASC' } });
+    const users = await this.userRepository.find({
+      relations: { role: true },
+      order: { id: 'ASC' },
+    });
     return users.map((user) =>
       plainToInstance(UserDto, user, { excludeExtraneousValues: true }),
     );
@@ -46,7 +49,10 @@ export class UserService {
    * @throws NotFoundException Si no existe un usuario con ese `id`.
    */
   async findById(userId: number): Promise<UserDto> {
-    const user = await this.userRepository.findOneBy({ id: userId });
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: { role: true },
+    });
     if (!user) throw new NotFoundException('User not found');
     return plainToInstance(UserDto, user, { excludeExtraneousValues: true });
   }
@@ -55,11 +61,10 @@ export class UserService {
    * Crea un usuario con la cuenta inactiva (`is_active = false`).
    *
    * @param request Datos del nuevo usuario.
-   * @returns El usuario creado.
    * @throws BadRequestException Si el `username` o el `email` ya existen, o si
    * el `role_id` no corresponde a un rol.
    */
-  async create(request: CreateUserDto): Promise<UserDto> {
+  async create(request: CreateUserDto): Promise<void> {
     if (await this.userRepository.findOneBy({ username: request.username })) {
       throw new BadRequestException('Username already exists');
     }
@@ -88,10 +93,7 @@ export class UserService {
       updated_at: new Date(),
     });
 
-    const createdUser = await this.userRepository.insert(user);
-    return plainToInstance(UserDto, createdUser, {
-      excludeExtraneousValues: true,
-    });
+    await this.userRepository.insert(user);
   }
 
   /**

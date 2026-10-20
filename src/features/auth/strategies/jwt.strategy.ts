@@ -3,6 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
+import { AuthenticatedUser } from '@/features/auth/interfaces/authenticated-user.interface';
+import { JwtPayload } from '@/features/auth/interfaces/jwt-payload.interface';
+
 /** Estrategia de Passport que autentica peticiones con un token JWT. */
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -21,7 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * @param payload Contenido del token: `sub` (id del usuario) y `username`.
    * @returns El usuario autenticado: `userId` y `username`.
    */
-  async validate(payload: any) {
+  validate(payload: JwtPayload): AuthenticatedUser {
     return { userId: payload.sub, username: payload.username };
   }
 }

@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { App } from 'supertest/types';
 
+import { AppInfo } from '@/app.controller';
 import { AppModule } from '@/app.module';
 
 describe('AppController (e2e)', () => {
@@ -22,14 +23,14 @@ describe('AppController (e2e)', () => {
       .get('/')
       .expect(200)
       .expect((response) => {
-        expect(response.body).toMatchObject({
+        const body = response.body as AppInfo;
+
+        expect(body).toMatchObject({
           name: 'nestjs-rest-api',
           description: 'Nestjs Rest Api',
           version: '0.0.1',
         });
-        expect(response.body.documentation).toMatch(
-          /^http:\/\/127\.0\.0\.1:\d+\/docs$/,
-        );
+        expect(body.documentation).toMatch(/^http:\/\/127\.0\.0\.1:\d+\/docs$/);
       });
   });
 
