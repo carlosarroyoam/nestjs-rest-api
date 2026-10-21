@@ -24,14 +24,11 @@ export class User {
   @Column('varchar', { length: 128, nullable: false })
   password_hash!: string;
 
-  @ManyToOne(() => Role, (role: Role) => role.users)
+  @ManyToOne(() => Role, (role: Role) => role.users, { nullable: false })
   @JoinColumn({ name: 'role_id', referencedColumnName: 'id' })
   role!: Role;
 
-  @Column('bit', {
-    nullable: false,
-    transformer: new BoolBitTransformer(),
-  })
+  @Column('bit', { nullable: false, transformer: new BoolBitTransformer() })
   is_active!: boolean;
 
   @Column('datetime', { nullable: false })

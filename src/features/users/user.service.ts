@@ -53,7 +53,11 @@ export class UserService {
       where: { id: userId },
       relations: { role: true },
     });
-    if (!user) throw new NotFoundException('User not found');
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
     return plainToInstance(UserDto, user, { excludeExtraneousValues: true });
   }
 
@@ -65,32 +69,29 @@ export class UserService {
    * el `role_id` no corresponde a un rol.
    */
   async create(request: CreateUserDto): Promise<void> {
-    if (await this.userRepository.findOneBy({ username: request.username })) {
+    if (await this.userRepository.existsBy({ username: request.username })) {
       throw new BadRequestException('Username already exists');
     }
 
-    if (await this.userRepository.findOneBy({ email: request.email })) {
+    if (await this.userRepository.existsBy({ email: request.email })) {
       throw new BadRequestException('Email already exists');
     }
 
-    const role = await this.roleRepository.findOneBy({
-      id: request.role_id,
-    });
-    if (!role) throw new BadRequestException('Role not found');
+    if (!(await this.roleRepository.existsBy({ id: request.role_id }))) {
+      throw new BadRequestException('Role not found');
+    }
 
+    const now = new Date();
     const user = this.userRepository.create({
-      name: request.name,
-      age: request.age,
-      email: request.email,
-      username: request.username,
+      ...request,
       password_hash: await bcrypt.hash(
         request.password,
         Number(this.configService.getOrThrow<string>('SALT_ROUNDS')),
       ),
-      role,
+      role: { id: request.role_id },
       is_active: false,
-      created_at: new Date(),
-      updated_at: new Date(),
+      created_at: now,
+      updated_at: now,
     });
 
     await this.userRepository.insert(user);
@@ -108,32 +109,28 @@ export class UserService {
    * un rol.
    */
   async update(userId: number, request: UpdateUserDto): Promise<void> {
-    const user = await this.userRepository.findOneBy({ id: userId });
-    if (!user) throw new NotFoundException('User not found');
+    const { password, role_id, ...fields } = request;
 
-    let role: Role | undefined;
-    if (request.role_id !== undefined) {
-      const requestedRole = await this.roleRepository.findOneBy({
-        id: request.role_id,
-      });
-      if (!requestedRole) throw new BadRequestException('Role not found');
-      role = requestedRole;
+    if (!(await this.userRepository.existsBy({ id: userId }))) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (
+      role_id !== undefined &&
+      !(await this.roleRepository.existsBy({ id: role_id }))
+    ) {
+      throw new BadRequestException('Role not found');
     }
 
     await this.userRepository.update(userId, {
-      ...(request.name !== undefined && { name: request.name }),
-      ...(request.age !== undefined && { age: request.age }),
-      ...(request.email !== undefined && { email: request.email }),
-      ...(request.username !== undefined && {
-        username: request.username,
-      }),
-      ...(request.password !== undefined && {
-        password_hash: await bcrypt.hash(
-          request.password,
+      ...fields,
+      password_hash:
+        password &&
+        (await bcrypt.hash(
+          password,
           Number(this.configService.getOrThrow<string>('SALT_ROUNDS')),
-        ),
-      }),
-      ...(role && { role }),
+        )),
+      role: role_id === undefined ? undefined : { id: role_id },
       updated_at: new Date(),
     });
   }
@@ -146,8 +143,10 @@ export class UserService {
    * @throws NotFoundException Si no existe un usuario con ese `id`.
    */
   async remove(userId: number): Promise<void> {
-    const user = await this.userRepository.findOneBy({ id: userId });
-    if (!user) throw new NotFoundException('User not found');
+    if (!(await this.userRepository.existsBy({ id: userId }))) {
+      throw new NotFoundException('User not found');
+    }
+
     await this.userRepository.update(userId, { is_active: false });
   }
 }

@@ -46,12 +46,12 @@ async function bootstrap(): Promise<void> {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
+      transform: true,
       exceptionFactory: (errors: ValidationError[]): BadRequestException => {
         return new BadRequestException({
-          message: 'Error de validación',
+          message: 'Validation Error',
           errors: flattenValidationErrors(errors),
         });
       },

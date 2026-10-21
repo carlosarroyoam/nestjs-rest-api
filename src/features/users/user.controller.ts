@@ -39,13 +39,13 @@ export class UserController {
   /**
    * `GET /users/:id`. Obtiene un usuario.
    *
-   * @param id Identificador del usuario.
+   * @param userId Identificador del usuario.
    * @returns El usuario encontrado. Responde 404 si no existe.
    */
-  @Get(':id')
+  @Get(':userId')
   @ApiOperation({ summary: 'Gets a user by its id' })
-  async findOne(@Param('id') id: number): Promise<UserDto> {
-    return this.userService.findById(id);
+  async findOne(@Param('userId') userId: number): Promise<UserDto> {
+    return this.userService.findById(userId);
   }
 
   /**
@@ -62,29 +62,29 @@ export class UserController {
   /**
    * `PATCH /users/:id`. Actualiza parcialmente un usuario. Responde 204.
    *
-   * @param id Identificador del usuario.
+   * @param userId Identificador del usuario.
    * @param updateUserDto Campos a modificar.
    */
-  @Patch(':id')
+  @Patch(':userId')
   @HttpCode(204)
   @ApiOperation({ summary: 'Updates a user by its id' })
   async update(
-    @Param('id') id: number,
+    @Param('userId') userId: number,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<void> {
-    await this.userService.update(id, updateUserDto);
+    await this.userService.update(userId, updateUserDto);
   }
 
   /**
    * `DELETE /users/:id`. Da de baja un usuario con borrado lógico: lo marca
    * como inactivo. Responde 204.
    *
-   * @param id Identificador del usuario.
+   * @param userId Identificador del usuario.
    */
-  @Delete(':id')
+  @Delete(':userId')
   @HttpCode(204)
   @ApiOperation({ summary: 'Deletes a user by its id' })
-  async remove(@Param('id') id: number): Promise<void> {
-    await this.userService.remove(id);
+  async remove(@Param('userId') userId: number): Promise<void> {
+    await this.userService.remove(userId);
   }
 }
