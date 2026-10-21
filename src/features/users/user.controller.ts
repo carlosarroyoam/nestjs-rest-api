@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpCode,
   Param,
@@ -11,10 +12,13 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { CurrentUser } from '@/features/auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '@/features/auth/guards/jwt-guard';
+import type { AuthenticatedUser } from '@/features/auth/interfaces/authenticated-user.interface';
 import { CreateUserDto } from '@/features/users/dto/create-user.dto';
 import { UpdateUserDto } from '@/features/users/dto/update-user.dto';
 import { UserDto } from '@/features/users/dto/user.dto';
+import { ADMIN_ROLE } from '@/features/users/entities/role.entity';
 import { UserService } from '@/features/users/user.service';
 
 /** Endpoints REST de usuarios, en `/users`. Requieren un token JWT válido. */
@@ -64,6 +68,8 @@ export class UserController {
    *
    * @param userId Identificador del usuario.
    * @param updateUserDto Campos a modificar.
+   * @param currentUser Usuario autenticado. Responde 403 si no es `userId` ni
+   * administrador.
    */
   @Patch(':userId')
   @HttpCode(204)
@@ -71,7 +77,12 @@ export class UserController {
   async update(
     @Param('userId') userId: number,
     @Body() updateUserDto: UpdateUserDto,
+    @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<void> {
+    if (currentUser.userId !== userId && currentUser.role !== ADMIN_ROLE) {
+      throw new ForbiddenException('You can only update your own user');
+    }
+
     await this.userService.update(userId, updateUserDto);
   }
 

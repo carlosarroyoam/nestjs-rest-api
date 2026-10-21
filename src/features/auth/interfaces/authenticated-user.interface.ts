@@ -2,4 +2,5 @@
 export interface AuthenticatedUser {
   userId: number;
   username: string;
+  role: string;
 }

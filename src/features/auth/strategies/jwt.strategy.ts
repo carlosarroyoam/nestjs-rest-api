@@ -21,10 +21,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * Se ejecuta después de verificar el token. Passport asigna el resultado a
    * `request.user`.
    *
-   * @param payload Contenido del token: `sub` (id del usuario) y `username`.
-   * @returns El usuario autenticado: `userId` y `username`.
+   * @param payload Contenido del token: `sub` (id del usuario), `username` y
+   * `role`.
+   * @returns El usuario autenticado: `userId`, `username` y `role`.
    */
   validate(payload: JwtPayload): AuthenticatedUser {
-    return { userId: payload.sub, username: payload.username };
+    return {
+      userId: payload.sub,
+      username: payload.username,
+      role: payload.role,
+    };
   }
 }

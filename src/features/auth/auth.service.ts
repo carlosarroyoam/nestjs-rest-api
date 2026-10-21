@@ -28,7 +28,10 @@ export class AuthService {
    * incorrecta (mismo mensaje en ambos casos), o si la cuenta está inactiva.
    */
   async validateUser(username: string, password: string): Promise<User> {
-    const user = await this.userRepository.findOneBy({ username });
+    const user = await this.userRepository.findOne({
+      where: { username },
+      relations: { role: true },
+    });
 
     if (!user || !(await bcrypt.compare(password, user.password_hash))) {
       throw new ForbiddenException('Invalid username or password');
@@ -44,14 +47,18 @@ export class AuthService {
   /**
    * Genera el token de acceso de un usuario ya validado.
    *
-   * El token incluye `username` y `sub` (id del usuario). Su vigencia depende
-   * de `JWT_EXPIRES_IN`.
+   * El token incluye `username`, `sub` (id del usuario) y `role` (tipo del
+   * rol). Su vigencia depende de `JWT_EXPIRES_IN`.
    *
-   * @param user Usuario autenticado.
+   * @param user Usuario autenticado, con su rol cargado.
    * @returns Datos del usuario y el token JWT firmado.
    */
   login(user: User): LoginResponseDto {
-    const payload: JwtPayload = { username: user.username, sub: user.id };
+    const payload: JwtPayload = {
+      username: user.username,
+      sub: user.id,
+      role: user.role.type,
+    };
 
     return {
       id: user.id,

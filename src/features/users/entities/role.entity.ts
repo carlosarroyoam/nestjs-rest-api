@@ -2,6 +2,9 @@ import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 
 import { User } from '@/features/users/entities/user.entity';
 
+/** Valor de `Role.type` del rol de administrador. */
+export const ADMIN_ROLE = 'Admin';
+
 /** Rol que determina el perfil de un usuario. Tabla `roles`. */
 @Entity({ name: 'roles' })
 export class Role {

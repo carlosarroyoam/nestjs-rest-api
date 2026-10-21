@@ -69,13 +69,8 @@ export class UserService {
    * el `role_id` no corresponde a un rol.
    */
   async create(request: CreateUserDto): Promise<void> {
-    if (await this.userRepository.existsBy({ username: request.username })) {
-      throw new BadRequestException('Username already exists');
-    }
-
-    if (await this.userRepository.existsBy({ email: request.email })) {
-      throw new BadRequestException('Email already exists');
-    }
+    await this.ensureUsernameIsUnique(request.username);
+    await this.ensureEmailIsUnique(request.email);
 
     if (!(await this.roleRepository.existsBy({ id: request.role_id }))) {
       throw new BadRequestException('Role not found');
@@ -109,18 +104,30 @@ export class UserService {
    * un rol.
    */
   async update(userId: number, request: UpdateUserDto): Promise<void> {
-    const { password, role_id, ...fields } = request;
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
 
-    if (!(await this.userRepository.existsBy({ id: userId }))) {
+    if (!user) {
       throw new NotFoundException('User not found');
     }
 
+    if (request.username && request.username !== user.username) {
+      await this.ensureUsernameIsUnique(request.username);
+    }
+
+    if (request.email && request.email !== user.email) {
+      await this.ensureEmailIsUnique(request.email);
+    }
+
     if (
-      role_id !== undefined &&
-      !(await this.roleRepository.existsBy({ id: role_id }))
+      request.role_id &&
+      !(await this.roleRepository.existsBy({ id: request.role_id }))
     ) {
       throw new BadRequestException('Role not found');
     }
+
+    const { password, role_id, ...fields } = request;
 
     await this.userRepository.update(userId, {
       ...fields,
@@ -130,7 +137,7 @@ export class UserService {
           password,
           Number(this.configService.getOrThrow<string>('SALT_ROUNDS')),
         )),
-      role: role_id === undefined ? undefined : { id: role_id },
+      role: role_id !== undefined ? { id: role_id } : undefined,
       updated_at: new Date(),
     });
   }
@@ -148,5 +155,29 @@ export class UserService {
     }
 
     await this.userRepository.update(userId, { is_active: false });
+  }
+
+  /**
+   * Verifica que ningún usuario use ya el `username` indicado.
+   *
+   * @param username Nombre de usuario a validar.
+   * @throws BadRequestException Si el `username` ya existe.
+   */
+  private async ensureUsernameIsUnique(username: string): Promise<void> {
+    if (await this.userRepository.existsBy({ username })) {
+      throw new BadRequestException('Username already exists');
+    }
+  }
+
+  /**
+   * Verifica que ningún usuario use ya el `email` indicado.
+   *
+   * @param email Correo electrónico a validar.
+   * @throws BadRequestException Si el `email` ya existe.
+   */
+  private async ensureEmailIsUnique(email: string): Promise<void> {
+    if (await this.userRepository.existsBy({ email })) {
+      throw new BadRequestException('Email already exists');
+    }
   }
 }
