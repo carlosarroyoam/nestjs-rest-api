@@ -36,6 +36,7 @@ export class UserService {
       relations: { role: true },
       order: { id: 'ASC' },
     });
+
     return users.map((user) =>
       plainToInstance(UserDto, user, { excludeExtraneousValues: true }),
     );
