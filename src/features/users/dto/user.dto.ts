@@ -24,11 +24,11 @@ export class UserDto {
   role!: RoleDto;
 
   @Expose()
-  is_active!: boolean;
+  isActive!: boolean;
 
   @Expose()
-  created_at!: Date;
+  createdAt!: Date;
 
   @Expose()
-  updated_at!: Date;
+  updatedAt!: Date;
 }

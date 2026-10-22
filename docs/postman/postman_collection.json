@@ -20,7 +20,7 @@
                   "\r",
                   "if (pm.response.status === \"OK\") {\r",
                   "    if (response) {\r",
-                  "        pm.collectionVariables.set(\"token\", response.access_token);\r",
+                  "        pm.collectionVariables.set(\"token\", response.accessToken);\r",
                   "    }\r",
                   "} else {\r",
                   "    pm.collectionVariables.set(\"token\", \"\");\r",
@@ -113,7 +113,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"name\": \"Cathy Stefania Guido Rojas\",\r\n    \"age\": 28,\r\n    \"email\": \"cguidor@mail.com\",\r\n    \"username\": \"cguidor\",\r\n    \"password\": \"secret\",\r\n    \"role_id\": 2\r\n}",
+              "raw": "{\r\n    \"name\": \"Cathy Stefania Guido Rojas\",\r\n    \"age\": 28,\r\n    \"email\": \"cguidor@mail.com\",\r\n    \"username\": \"cguidor\",\r\n    \"password\": \"secret\",\r\n    \"roleId\": 2\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -155,7 +155,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"name\": \"Cathy Stefania Guido Rojas\",\r\n    \"age\": 31,\r\n    \"email\": \"cguidor@mail.com\",\r\n    \"username\": \"cguidor\",\r\n    \"password\": \"secret123\",\r\n    \"role_id\": 2\r\n}",
+              "raw": "{\r\n    \"name\": \"Cathy Stefania Guido Rojas\",\r\n    \"age\": 31,\r\n    \"email\": \"cguidor@mail.com\",\r\n    \"username\": \"cguidor\",\r\n    \"password\": \"secret123\",\r\n    \"roleId\": 2\r\n}",
               "options": {
                 "raw": {
                   "language": "json"

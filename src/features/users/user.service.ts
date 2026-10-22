@@ -63,17 +63,17 @@ export class UserService {
   }
 
   /**
-   * Crea un usuario con la cuenta inactiva (`is_active = false`).
+   * Crea un usuario con la cuenta inactiva (`isActive = false`).
    *
    * @param request Datos del nuevo usuario.
    * @throws BadRequestException Si el `username` o el `email` ya existen, o si
-   * el `role_id` no corresponde a un rol.
+   * el `roleId` no corresponde a un rol.
    */
   async create(request: CreateUserDto): Promise<void> {
     await this.ensureUsernameIsUnique(request.username);
     await this.ensureEmailIsUnique(request.email);
 
-    const role = await this.findRoleByIdOrFail(request.role_id);
+    const role = await this.findRoleByIdOrFail(request.roleId);
     const now = new Date();
 
     const user = new User();
@@ -81,23 +81,23 @@ export class UserService {
     user.age = request.age;
     user.email = request.email;
     user.username = request.username;
-    user.password_hash = await this.hashPassword(request.password);
+    user.passwordHash = await this.hashPassword(request.password);
     user.role = role;
-    user.is_active = false;
-    user.created_at = now;
-    user.updated_at = now;
+    user.isActive = false;
+    user.createdAt = now;
+    user.updatedAt = now;
     await this.userRepository.save(user);
   }
 
   /**
    * Actualiza de forma parcial un usuario: solo modifica los campos presentes
    * en `request`. Si se envía `password`, se guarda su nuevo hash. Siempre
-   * actualiza `updated_at`.
+   * actualiza `updatedAt`.
    *
    * @param userId Identificador del usuario.
    * @param request Campos a modificar.
    * @throws NotFoundException Si no existe un usuario con ese `id`.
-   * @throws BadRequestException Si se envía un `role_id` que no corresponde a
+   * @throws BadRequestException Si se envía un `roleId` que no corresponde a
    * un rol.
    */
   async update(userId: number, request: UpdateUserDto): Promise<void> {
@@ -116,25 +116,25 @@ export class UserService {
     }
 
     const now = new Date();
-    const { password, role_id, ...fields } = request;
+    const { password, roleId, ...fields } = request;
 
     Object.assign(user, fields);
 
     if (password) {
-      user.password_hash = await this.hashPassword(password);
+      user.passwordHash = await this.hashPassword(password);
     }
 
-    if (role_id !== undefined) {
-      user.role = await this.findRoleByIdOrFail(role_id);
+    if (roleId !== undefined) {
+      user.role = await this.findRoleByIdOrFail(roleId);
     }
 
-    user.updated_at = now;
+    user.updatedAt = now;
     await this.userRepository.save(user);
   }
 
   /**
    * Da de baja un usuario con borrado lógico: marca la cuenta como inactiva
-   * (`is_active = false`) y conserva el registro.
+   * (`isActive = false`) y conserva el registro.
    *
    * @param userId Identificador del usuario.
    * @throws NotFoundException Si no existe un usuario con ese `id`.
@@ -147,8 +147,8 @@ export class UserService {
     }
 
     const now = new Date();
-    user.is_active = false;
-    user.updated_at = now;
+    user.isActive = false;
+    user.updatedAt = now;
     await this.userRepository.save(user);
   }
 

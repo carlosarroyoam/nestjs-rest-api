@@ -21,7 +21,7 @@ export class AuthService {
    * Valida las credenciales de un usuario.
    *
    * @param username Nombre de usuario.
-   * @param password Contraseña en claro, que se compara con `password_hash`.
+   * @param password Contraseña en claro, que se compara con `passwordHash`.
    * @returns El usuario, si las credenciales son correctas y la cuenta está
    * activa.
    * @throws ForbiddenException Si el usuario no existe o la contraseña es
@@ -33,11 +33,11 @@ export class AuthService {
       relations: { role: true },
     });
 
-    if (!user || !(await bcrypt.compare(password, user.password_hash))) {
+    if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
       throw new ForbiddenException('Invalid username or password');
     }
 
-    if (user.is_active === false) {
+    if (user.isActive === false) {
       throw new ForbiddenException('User account not active');
     }
 
@@ -63,7 +63,7 @@ export class AuthService {
     return {
       id: user.id,
       username: user.username,
-      access_token: this.jwtService.sign(payload),
+      accessToken: this.jwtService.sign(payload),
     };
   }
 }

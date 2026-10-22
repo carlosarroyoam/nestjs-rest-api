@@ -48,7 +48,7 @@ describe('UserService', () => {
         email: 'ada@example.com',
         username: 'ada',
         password: 'secret',
-        role_id: 99,
+        roleId: 99,
       }),
     ).rejects.toThrow('Role not found');
   });
@@ -57,7 +57,7 @@ describe('UserService', () => {
     userRepository.findOneBy.mockResolvedValue({ id: 1 });
     roleRepository.findOneBy.mockResolvedValue(null);
 
-    await expect(service.update(1, { role_id: 99 })).rejects.toThrow(
+    await expect(service.update(1, { roleId: 99 })).rejects.toThrow(
       'Role not found',
     );
   });
@@ -83,19 +83,19 @@ describe('UserService', () => {
     expect(userRepository.save).toHaveBeenCalled();
   });
 
-  it('maps password and role_id to entity properties on update', async () => {
+  it('maps password and roleId to entity properties on update', async () => {
     userRepository.findOneBy.mockResolvedValue({ id: 1 });
     roleRepository.findOneBy.mockResolvedValue({ id: 2 });
 
-    await service.update(1, { name: 'Ada', password: 'new', role_id: 2 });
+    await service.update(1, { name: 'Ada', password: 'new', roleId: 2 });
 
     const [saved] = userRepository.save.mock.calls[0] as [User];
     expect(saved).not.toHaveProperty('password');
-    expect(saved).not.toHaveProperty('role_id');
+    expect(saved).not.toHaveProperty('roleId');
     expect(saved).toMatchObject({ id: 1, name: 'Ada', role: { id: 2 } });
-    expect(saved.password_hash).toEqual(expect.any(String));
-    expect(saved.password_hash).not.toBe('new');
-    expect(saved.updated_at).toBeInstanceOf(Date);
+    expect(saved.passwordHash).toEqual(expect.any(String));
+    expect(saved.passwordHash).not.toBe('new');
+    expect(saved.updatedAt).toBeInstanceOf(Date);
   });
 
   it('rejects an update with an email used by another user', async () => {
@@ -120,29 +120,28 @@ describe('UserService', () => {
       email: 'ada@example.com',
       username: 'ada',
       password: 'secret',
-      role_id: 2,
+      roleId: 2,
     });
 
     const [saved] = userRepository.save.mock.calls[0] as [User];
     expect(saved).toBeInstanceOf(User);
     expect(saved).toMatchObject({
       name: 'Ada',
-      is_active: false,
+      isActive: false,
       role: { id: 2 },
     });
     expect(saved).not.toHaveProperty('password');
-    expect(saved.password_hash).not.toBe('secret');
+    expect(saved.passwordHash).not.toBe('secret');
   });
 
   it('soft-deletes a user by marking it inactive', async () => {
-    userRepository.findOneBy.mockResolvedValue({ id: 1, is_active: true });
+    userRepository.findOneBy.mockResolvedValue({ id: 1, isActive: true });
 
     await service.remove(1);
 
-    expect(userRepository.save).toHaveBeenCalledWith({
-      id: 1,
-      is_active: false,
-    });
+    const [saved] = userRepository.save.mock.calls[0] as [User];
+    expect(saved).toMatchObject({ id: 1, isActive: false });
+    expect(saved.updatedAt).toBeInstanceOf(Date);
   });
 
   it('rejects removal when the user does not exist', async () => {

@@ -21,19 +21,23 @@ export class User {
   @Column('varchar', { length: 128, nullable: false })
   username!: string;
 
-  @Column('varchar', { length: 128, nullable: false })
-  password_hash!: string;
+  @Column('varchar', { name: 'password_hash', length: 128, nullable: false })
+  passwordHash!: string;
 
   @ManyToOne(() => Role, (role: Role) => role.users, { nullable: false })
   @JoinColumn({ name: 'role_id', referencedColumnName: 'id' })
   role!: Role;
 
-  @Column('bit', { nullable: false, transformer: new BoolBitTransformer() })
-  is_active!: boolean;
+  @Column('bit', {
+    name: 'is_active',
+    nullable: false,
+    transformer: new BoolBitTransformer(),
+  })
+  isActive!: boolean;
 
-  @Column('datetime', { nullable: false })
-  created_at!: Date;
+  @Column('datetime', { name: 'created_at', nullable: false })
+  createdAt!: Date;
 
-  @Column('datetime', { nullable: false })
-  updated_at!: Date;
+  @Column('datetime', { name: 'updated_at', nullable: false })
+  updatedAt!: Date;
 }
