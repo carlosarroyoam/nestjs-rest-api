@@ -73,24 +73,20 @@ export class UserService {
     await this.ensureUsernameIsUnique(request.username);
     await this.ensureEmailIsUnique(request.email);
 
-    if (!(await this.roleRepository.existsBy({ id: request.role_id }))) {
-      throw new BadRequestException('Role not found');
-    }
-
+    const role = await this.findRoleByIdOrFail(request.role_id);
     const now = new Date();
-    const user = this.userRepository.create({
-      ...request,
-      password_hash: await bcrypt.hash(
-        request.password,
-        Number(this.configService.getOrThrow<string>('SALT_ROUNDS')),
-      ),
-      role: { id: request.role_id },
-      is_active: false,
-      created_at: now,
-      updated_at: now,
-    });
 
-    await this.userRepository.insert(user);
+    const user = new User();
+    user.name = request.name;
+    user.age = request.age;
+    user.email = request.email;
+    user.username = request.username;
+    user.password_hash = await this.hashPassword(request.password);
+    user.role = role;
+    user.is_active = false;
+    user.created_at = now;
+    user.updated_at = now;
+    await this.userRepository.save(user);
   }
 
   /**
@@ -105,9 +101,7 @@ export class UserService {
    * un rol.
    */
   async update(userId: number, request: UpdateUserDto): Promise<void> {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-    });
+    const user = await this.userRepository.findOneBy({ id: userId });
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -121,26 +115,21 @@ export class UserService {
       await this.ensureEmailIsUnique(request.email);
     }
 
-    if (
-      request.role_id &&
-      !(await this.roleRepository.existsBy({ id: request.role_id }))
-    ) {
-      throw new BadRequestException('Role not found');
-    }
-
+    const now = new Date();
     const { password, role_id, ...fields } = request;
 
-    await this.userRepository.update(userId, {
-      ...fields,
-      password_hash:
-        password &&
-        (await bcrypt.hash(
-          password,
-          Number(this.configService.getOrThrow<string>('SALT_ROUNDS')),
-        )),
-      role: role_id !== undefined ? { id: role_id } : undefined,
-      updated_at: new Date(),
-    });
+    Object.assign(user, fields);
+
+    if (password) {
+      user.password_hash = await this.hashPassword(password);
+    }
+
+    if (role_id !== undefined) {
+      user.role = await this.findRoleByIdOrFail(role_id);
+    }
+
+    user.updated_at = now;
+    await this.userRepository.save(user);
   }
 
   /**
@@ -151,11 +140,16 @@ export class UserService {
    * @throws NotFoundException Si no existe un usuario con ese `id`.
    */
   async remove(userId: number): Promise<void> {
-    if (!(await this.userRepository.existsBy({ id: userId }))) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    await this.userRepository.update(userId, { is_active: false });
+    const now = new Date();
+    user.is_active = false;
+    user.updated_at = now;
+    await this.userRepository.save(user);
   }
 
   /**
@@ -180,5 +174,35 @@ export class UserService {
     if (await this.userRepository.existsBy({ email })) {
       throw new BadRequestException('Email already exists');
     }
+  }
+
+  /**
+   * Obtiene un rol por su identificador.
+   *
+   * @param roleId Identificador del rol.
+   * @returns El rol encontrado.
+   * @throws BadRequestException Si no existe un rol con ese `id`.
+   */
+  private async findRoleByIdOrFail(roleId: number): Promise<Role> {
+    const role = await this.roleRepository.findOneBy({ id: roleId });
+
+    if (!role) {
+      throw new BadRequestException('Role not found');
+    }
+
+    return role;
+  }
+
+  /**
+   * Genera el hash bcrypt de una contraseña.
+   *
+   * @param password Contraseña en texto plano.
+   * @returns El hash resultante.
+   */
+  private hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(
+      password,
+      Number(this.configService.getOrThrow<string>('SALT_ROUNDS')),
+    );
   }
 }
