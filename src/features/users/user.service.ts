@@ -102,7 +102,6 @@ export class UserService {
    */
   async update(userId: number, request: UpdateUserDto): Promise<void> {
     const user = await this.userRepository.findOneBy({ id: userId });
-
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -141,7 +140,6 @@ export class UserService {
    */
   async remove(userId: number): Promise<void> {
     const user = await this.userRepository.findOneBy({ id: userId });
-
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -150,6 +148,22 @@ export class UserService {
     user.isActive = false;
     user.updatedAt = now;
     await this.userRepository.save(user);
+  }
+
+  /**
+   * Obtiene un rol por su identificador.
+   *
+   * @param roleId Identificador del rol.
+   * @returns El rol encontrado.
+   * @throws BadRequestException Si no existe un rol con ese `id`.
+   */
+  private async findRoleByIdOrFail(roleId: number): Promise<Role> {
+    const role = await this.roleRepository.findOneBy({ id: roleId });
+    if (!role) {
+      throw new BadRequestException('Role not found');
+    }
+
+    return role;
   }
 
   /**
@@ -174,23 +188,6 @@ export class UserService {
     if (await this.userRepository.existsBy({ email })) {
       throw new BadRequestException('Email already exists');
     }
-  }
-
-  /**
-   * Obtiene un rol por su identificador.
-   *
-   * @param roleId Identificador del rol.
-   * @returns El rol encontrado.
-   * @throws BadRequestException Si no existe un rol con ese `id`.
-   */
-  private async findRoleByIdOrFail(roleId: number): Promise<Role> {
-    const role = await this.roleRepository.findOneBy({ id: roleId });
-
-    if (!role) {
-      throw new BadRequestException('Role not found');
-    }
-
-    return role;
   }
 
   /**
