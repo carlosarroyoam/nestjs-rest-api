@@ -7,16 +7,16 @@ import { User } from '@/features/users/entities/user.entity';
 
 describe('AuthService', () => {
   let service: AuthService;
-  const jwtService = { sign: jest.fn() };
+  const jwtService = { sign: vi.fn() };
 
   beforeEach(async () => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
         {
           provide: getRepositoryToken(User),
-          useValue: { findOne: jest.fn() },
+          useValue: { findOne: vi.fn() },
         },
         { provide: JwtService, useValue: jwtService },
       ],

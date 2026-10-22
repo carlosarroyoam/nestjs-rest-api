@@ -9,17 +9,17 @@ import { UserService } from '@/features/users/user.service';
 describe('UserService', () => {
   let service: UserService;
   const userRepository = {
-    find: jest.fn(),
-    findOne: jest.fn(),
-    existsBy: jest.fn(),
-    create: jest.fn(),
-    insert: jest.fn(),
-    update: jest.fn(),
+    find: vi.fn(),
+    findOne: vi.fn(),
+    existsBy: vi.fn(),
+    create: vi.fn(),
+    insert: vi.fn(),
+    update: vi.fn(),
   };
-  const roleRepository = { existsBy: jest.fn() };
+  const roleRepository = { existsBy: vi.fn() };
 
   beforeEach(async () => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
@@ -27,7 +27,7 @@ describe('UserService', () => {
         { provide: getRepositoryToken(Role), useValue: roleRepository },
         {
           provide: ConfigService,
-          useValue: { getOrThrow: jest.fn().mockReturnValue('10') },
+          useValue: { getOrThrow: vi.fn().mockReturnValue('10') },
         },
       ],
     }).compile();

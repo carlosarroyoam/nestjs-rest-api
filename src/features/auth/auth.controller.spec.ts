@@ -9,7 +9,7 @@ describe('AuthController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
-      providers: [{ provide: AuthService, useValue: { login: jest.fn() } }],
+      providers: [{ provide: AuthService, useValue: { login: vi.fn() } }],
     }).compile();
 
     controller = module.get<AuthController>(AuthController);

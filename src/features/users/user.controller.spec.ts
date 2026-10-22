@@ -7,15 +7,15 @@ import { UserService } from '@/features/users/user.service';
 describe('UserController', () => {
   let controller: UserController;
   const userService = {
-    create: jest.fn(),
-    findAll: jest.fn(),
-    findById: jest.fn(),
-    remove: jest.fn(),
-    update: jest.fn(),
+    create: vi.fn(),
+    findAll: vi.fn(),
+    findById: vi.fn(),
+    remove: vi.fn(),
+    update: vi.fn(),
   };
 
   beforeEach(async () => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
       providers: [{ provide: UserService, useValue: userService }],

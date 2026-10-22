@@ -5,21 +5,22 @@ import {
   Logger,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
+import type { MockInstance } from 'vitest';
 
 import { GlobalExceptionFilter } from '@/core/exception-filters/global-exception.filter';
 
 describe('GlobalExceptionFilter', () => {
   const httpAdapter = {
-    getRequestMethod: jest.fn(),
-    setHeader: jest.fn(),
-    reply: jest.fn(),
+    getRequestMethod: vi.fn(),
+    setHeader: vi.fn(),
+    reply: vi.fn(),
   };
 
   let filter: GlobalExceptionFilter;
   let response: { headersSent: boolean };
   let host: ArgumentsHost;
-  let errorLog: jest.SpyInstance;
-  let warnLog: jest.SpyInstance;
+  let errorLog: MockInstance;
+  let warnLog: MockInstance;
 
   const lastReply = (): { body: Record<string, unknown>; status: number } => {
     const [, body, status] = httpAdapter.reply.mock.calls[0] as [
@@ -32,7 +33,7 @@ describe('GlobalExceptionFilter', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     httpAdapter.getRequestMethod.mockReturnValue('GET');
 
@@ -44,8 +45,12 @@ describe('GlobalExceptionFilter', () => {
       }),
     } as unknown as ArgumentsHost;
 
-    errorLog = jest.spyOn(Logger.prototype, 'error').mockImplementation();
-    warnLog = jest.spyOn(Logger.prototype, 'warn').mockImplementation();
+    errorLog = vi
+      .spyOn(Logger.prototype, 'error')
+      .mockImplementation(() => undefined);
+    warnLog = vi
+      .spyOn(Logger.prototype, 'warn')
+      .mockImplementation(() => undefined);
 
     filter = new GlobalExceptionFilter({
       httpAdapter,
@@ -53,7 +58,7 @@ describe('GlobalExceptionFilter', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('should reply with an RFC 9457 problem details body', () => {
