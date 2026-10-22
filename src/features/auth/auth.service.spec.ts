@@ -35,7 +35,7 @@ describe('AuthService', () => {
     service.login({
       id: 1,
       username: 'ada',
-      role: { type: 'Admin' },
+      role: { name: 'Admin' },
     } as User);
 
     expect(jwtService.sign).toHaveBeenCalledWith({

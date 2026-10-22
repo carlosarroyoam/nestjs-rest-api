@@ -1,12 +1,12 @@
--- User Service MySQL Schema
+-- Nestjs User Service MySQL Schema
 
-CREATE DATABASE IF NOT EXISTS `user-service`;
+CREATE DATABASE IF NOT EXISTS `nest-user-service`;
 
-USE `user-service`;
+USE `nest-user-service`;
 
 CREATE TABLE IF NOT EXISTS roles (
   id INT NOT NULL AUTO_INCREMENT,
-  type VARCHAR(32) NOT NULL,
+  name VARCHAR(32) NOT NULL,
   description VARCHAR(128) NOT NULL,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

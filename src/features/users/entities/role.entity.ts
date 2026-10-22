@@ -12,7 +12,7 @@ export class Role {
   id!: number;
 
   @Column('varchar', { length: 32, nullable: false })
-  type!: string;
+  name!: string;
 
   @Column('varchar', { length: 128, nullable: false })
   description!: string;

@@ -6,7 +6,7 @@ export class RoleDto {
   id!: number;
 
   @Expose()
-  type!: string;
+  name!: string;
 
   @Expose()
   description!: string;
