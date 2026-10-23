@@ -56,11 +56,11 @@ export class AuthController {
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Refreshes an access token' })
-  refresh(
+  refreshToken(
     @Body() refreshTokenDto: RefreshTokenDto,
     @Headers('user-agent') userAgent?: string,
   ): Promise<RefreshResponseDto> {
-    return this.authService.refresh(
+    return this.authService.refreshToken(
       refreshTokenDto.refreshToken,
       refreshTokenDto.deviceId,
       userAgent,

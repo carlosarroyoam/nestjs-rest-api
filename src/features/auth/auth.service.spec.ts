@@ -130,7 +130,7 @@ describe('AuthService', () => {
       tokenRepository.findOne.mockResolvedValue(record());
       tokenRepository.update.mockResolvedValue({ affected: 1 });
 
-      const result = await service.refresh('current', 'device-1');
+      const result = await service.refreshToken('current', 'device-1');
 
       expect(result.accessToken).toBe('access');
       expect(result.refreshToken).not.toBe('current');
@@ -143,7 +143,7 @@ describe('AuthService', () => {
     it('rejects an unknown token', async () => {
       tokenRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.refresh('nope', 'device-1')).rejects.toThrow(
+      await expect(service.refreshToken('nope', 'device-1')).rejects.toThrow(
         'Invalid refresh token',
       );
     });
@@ -151,7 +151,7 @@ describe('AuthService', () => {
     it('rejects a token from another device', async () => {
       tokenRepository.findOne.mockResolvedValue(record());
 
-      await expect(service.refresh('current', 'device-2')).rejects.toThrow(
+      await expect(service.refreshToken('current', 'device-2')).rejects.toThrow(
         'Invalid refresh token',
       );
       expect(tokenRepository.update).not.toHaveBeenCalled();
@@ -163,7 +163,7 @@ describe('AuthService', () => {
         record({ updatedAt: eightDaysAgo }),
       );
 
-      await expect(service.refresh('current', 'device-1')).rejects.toThrow(
+      await expect(service.refreshToken('current', 'device-1')).rejects.toThrow(
         'Invalid refresh token',
       );
       expect(tokenRepository.delete).toHaveBeenCalledWith({ id: 5 });
@@ -174,7 +174,7 @@ describe('AuthService', () => {
         record({ user: { ...user, isActive: false } }),
       );
 
-      await expect(service.refresh('current', 'device-1')).rejects.toThrow(
+      await expect(service.refreshToken('current', 'device-1')).rejects.toThrow(
         'User account not active',
       );
     });
@@ -183,7 +183,7 @@ describe('AuthService', () => {
       tokenRepository.findOne.mockResolvedValue(record());
       tokenRepository.update.mockResolvedValue({ affected: 0 });
 
-      await expect(service.refresh('current', 'device-1')).rejects.toThrow(
+      await expect(service.refreshToken('current', 'device-1')).rejects.toThrow(
         'Invalid refresh token',
       );
     });

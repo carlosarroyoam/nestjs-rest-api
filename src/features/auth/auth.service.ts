@@ -102,7 +102,7 @@ export class AuthService {
    * o pertenece a otro dispositivo.
    * @throws ForbiddenException Si la cuenta está inactiva.
    */
-  async refresh(
+  async refreshToken(
     refreshToken: string,
     deviceId: string,
     userAgent?: string,
@@ -135,8 +135,8 @@ export class AuthService {
       { id: record.id, tokenHash: currentHash },
       {
         tokenHash: this.hashToken(newRefreshToken),
-        lastUsedAt: new Date(),
         userAgent: this.truncateUserAgent(userAgent),
+        lastUsedAt: new Date(),
       },
     );
 
@@ -184,9 +184,12 @@ export class AuthService {
         where: { user: { id: user.id }, deviceId },
       })) ?? this.refreshTokenRepository.create({ user, deviceId });
 
+    const now = new Date();
     record.tokenHash = this.hashToken(refreshToken);
-    record.lastUsedAt = new Date();
     record.userAgent = this.truncateUserAgent(userAgent);
+    record.lastUsedAt = now;
+    record.createdAt = now;
+    record.updatedAt = now;
     await this.refreshTokenRepository.save(record);
 
     return refreshToken;
