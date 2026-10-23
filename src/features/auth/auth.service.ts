@@ -191,6 +191,7 @@ export class AuthService {
     record.tokenHash = this.hashToken(refreshToken);
     record.userAgent = this.truncateUserAgent(userAgent);
     record.expiresOn = new Date(now.getTime() + this.refreshTokenTtlMs);
+    record.lastUsedAt = null;
     record.createdAt = now;
     record.updatedAt = now;
     await this.refreshTokenRepository.save(record);
