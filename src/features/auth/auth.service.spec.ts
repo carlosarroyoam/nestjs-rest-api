@@ -88,6 +88,7 @@ describe('AuthService', () => {
           tokenHash: hash(result.refreshToken),
           deviceId: 'device-1',
           userAgent: 'jest-agent',
+          expiresOn: expect.any(Date) as Date,
         }),
       );
     });
@@ -120,6 +121,7 @@ describe('AuthService', () => {
       id: 5,
       tokenHash: hash('current'),
       deviceId: 'device-1',
+      expiresOn: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       updatedAt: new Date(),
       user,
       ...overrides,
@@ -136,7 +138,10 @@ describe('AuthService', () => {
       expect(result.refreshToken).not.toBe('current');
       expect(tokenRepository.update).toHaveBeenCalledWith(
         { id: 5, tokenHash: hash('current') },
-        expect.objectContaining({ tokenHash: hash(result.refreshToken) }),
+        expect.objectContaining({
+          tokenHash: hash(result.refreshToken),
+          expiresOn: expect.any(Date) as Date,
+        }),
       );
     });
 
@@ -158,9 +163,8 @@ describe('AuthService', () => {
     });
 
     it('rejects and deletes an expired token', async () => {
-      const eightDaysAgo = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000);
       tokenRepository.findOne.mockResolvedValue(
-        record({ updatedAt: eightDaysAgo }),
+        record({ expiresOn: new Date(Date.now() - 1000) }),
       );
 
       await expect(service.refreshToken('current', 'device-1')).rejects.toThrow(

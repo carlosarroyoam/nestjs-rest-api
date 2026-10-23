@@ -16,7 +16,6 @@ export class RefreshToken {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  /** Hash SHA-256 del token; el token en claro nunca se almacena. */
   @Column('varchar', { name: 'token_hash', length: 254, nullable: false })
   tokenHash!: string;
 
@@ -30,12 +29,15 @@ export class RefreshToken {
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user!: User;
 
+  @Column('timestamp', { name: 'expires_on', nullable: false })
+  expiresOn!: Date;
+
   @Column('timestamp', { name: 'last_used_at', nullable: true })
   lastUsedAt!: Date | null;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: false })
   createdAt!: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp', nullable: false })
   updatedAt!: Date;
 }

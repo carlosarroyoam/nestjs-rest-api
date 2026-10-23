@@ -117,7 +117,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    if (record.updatedAt.getTime() + this.refreshTokenTtlMs < Date.now()) {
+    if (record.expiresOn.getTime() < Date.now()) {
       await this.refreshTokenRepository.delete({ id: record.id });
       throw new UnauthorizedException('Invalid refresh token');
     }
@@ -126,6 +126,7 @@ export class AuthService {
       throw new ForbiddenException('User account not active');
     }
 
+    const now = new Date();
     const newAccessToken = this.signAccessToken(record.user);
     const newRefreshToken = this.generateRefreshToken();
 
@@ -136,7 +137,9 @@ export class AuthService {
       {
         tokenHash: this.hashToken(newRefreshToken),
         userAgent: this.truncateUserAgent(userAgent),
-        lastUsedAt: new Date(),
+        expiresOn: new Date(now.getTime() + this.refreshTokenTtlMs),
+        lastUsedAt: now,
+        updatedAt: now,
       },
     );
 
@@ -187,7 +190,7 @@ export class AuthService {
     const now = new Date();
     record.tokenHash = this.hashToken(refreshToken);
     record.userAgent = this.truncateUserAgent(userAgent);
-    record.lastUsedAt = now;
+    record.expiresOn = new Date(now.getTime() + this.refreshTokenTtlMs);
     record.createdAt = now;
     record.updatedAt = now;
     await this.refreshTokenRepository.save(record);
