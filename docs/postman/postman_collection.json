@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "039e455f-6c3c-47dc-acfc-720cd485e541",
+    "_postman_id": "97314b94-6d03-4455-94e8-5480462c2b86",
     "name": "Nestjs Rest Api",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "6677786"
@@ -10,25 +10,15 @@
       "name": "auth",
       "item": [
         {
-          "name": "/auth",
+          "name": "/auth/login",
           "event": [
             {
               "listen": "test",
               "script": {
-                "exec": [
-                  "const response = pm.response.json();\r",
-                  "\r",
-                  "if (pm.response.status === \"OK\") {\r",
-                  "    if (response) {\r",
-                  "        pm.collectionVariables.set(\"token\", response.accessToken);\r",
-                  "    }\r",
-                  "} else {\r",
-                  "    pm.collectionVariables.set(\"token\", \"\");\r",
-                  "}"
-                ],
                 "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "exec": [
+                  "const response = pm.response.json();\r\n\r\nif (pm.response.status === \"OK\") {\r\n    if (response) {\r\n        pm.collectionVariables.set(\"accessToken\", response.accessToken);\r\n        pm.collectionVariables.set(\"refreshToken\", response.refreshToken);\r\n    }\r\n} else {\r\n    pm.collectionVariables.set(\"accessToken\", \"\");\r\n    pm.collectionVariables.set(\"refreshToken\", \"\");\r\n}"
+                ]
               }
             }
           ],
@@ -40,7 +30,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n\t\"username\": \"carroyom\",\r\n\t\"password\": \"secret123\"\r\n}",
+              "raw": "{\r\n    \"username\": \"carroyom\",\r\n    \"password\": \"secret123\",\r\n    \"deviceId\": \"{{deviceId}}\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -55,6 +45,77 @@
               "path": [
                 "auth",
                 "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/auth/refresh-token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const response = pm.response.json();\r\n\r\nif (pm.response.status === \"OK\") {\r\n    if (response) {\r\n        pm.collectionVariables.set(\"accessToken\", response.accessToken);\r\n        pm.collectionVariables.set(\"refreshToken\", response.refreshToken);\r\n    }\r\n} else {\r\n    pm.collectionVariables.set(\"accessToken\", \"\");\r\n    pm.collectionVariables.set(\"refreshToken\", \"\");\r\n}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"refreshToken\": \"{{refreshToken}}\",\r\n    \"deviceId\": \"{{deviceId}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh-token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "refresh-token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/auth/logout",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"refreshToken\": \"{{refreshToken}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
               ]
             }
           },
@@ -99,7 +160,7 @@
               "variable": [
                 {
                   "key": "userId",
-                  "value": "2"
+                  "value": "1"
                 }
               ]
             }
@@ -229,7 +290,7 @@
     "bearer": [
       {
         "key": "token",
-        "value": "{{token}}",
+        "value": "{{accessToken}}",
         "type": "string"
       }
     ]
@@ -260,7 +321,15 @@
       "value": "http://localhost:3000/api/v1"
     },
     {
-      "key": "token",
+      "key": "deviceId",
+      "value": ""
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
       "value": ""
     }
   ]
