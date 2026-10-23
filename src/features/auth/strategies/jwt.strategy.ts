@@ -9,7 +9,7 @@ import { JwtPayload } from '@/features/auth/interfaces/jwt-payload.interface';
 /** Estrategia de Passport que autentica peticiones con un token JWT. */
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly configService: ConfigService) {
+  constructor(configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,

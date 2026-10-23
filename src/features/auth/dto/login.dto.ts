@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsUUID } from 'class-validator';
 
 /** Credenciales para iniciar sesión. */
 export class LoginDto {
@@ -7,4 +7,7 @@ export class LoginDto {
 
   @IsNotEmpty()
   password!: string;
+
+  @IsUUID()
+  deviceId!: string;
 }

@@ -12,6 +12,7 @@ export class BoolBitTransformer implements ValueTransformer {
     if (value === null) {
       return null;
     }
+
     const res = Buffer.alloc(1);
     res[0] = value ? 1 : 0;
     return res;
@@ -28,6 +29,7 @@ export class BoolBitTransformer implements ValueTransformer {
     if (value === null) {
       return null;
     }
+
     return value[0] === 1;
   }
 }
