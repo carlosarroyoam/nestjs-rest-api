@@ -3,8 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { AuthenticatedUser } from '@/features/auth/interfaces/authenticated-user.interface';
-import { JwtPayload } from '@/features/auth/interfaces/jwt-payload.interface';
+import { AuthenticatedUser } from '@/auth/interfaces/authenticated-user.interface';
+import { JwtPayload } from '@/auth/interfaces/jwt-payload.interface';
 
 /** Estrategia de Passport que autentica peticiones con un token JWT. */
 @Injectable()
@@ -12,8 +12,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: false,
       secretOrKey: configService.getOrThrow<string>('JWT_SECRET'),
+      ignoreExpiration: false,
     });
   }
 

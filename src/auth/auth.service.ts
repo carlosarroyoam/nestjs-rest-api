@@ -11,11 +11,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 
-import { LoginResponseDto } from '@/features/auth/dto/login-response.dto';
-import { RefreshResponseDto } from '@/features/auth/dto/refresh-response.dto';
-import { RefreshToken } from '@/features/auth/entities/refresh-token.entity';
-import { JwtPayload } from '@/features/auth/interfaces/jwt-payload.interface';
-import { User } from '@/features/users/entities/user.entity';
+import { LoginResponseDto } from '@/auth/dto/login-response.dto';
+import { RefreshResponseDto } from '@/auth/dto/refresh-response.dto';
+import { RefreshToken } from '@/auth/entities/refresh-token.entity';
+import { JwtPayload } from '@/auth/interfaces/jwt-payload.interface';
+import { User } from '@/users/entities/user.entity';
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const USER_AGENT_MAX_LENGTH = 254;
@@ -34,8 +34,7 @@ export class AuthService {
     configService: ConfigService,
   ) {
     this.refreshTokenTtlMs =
-      Number(configService.getOrThrow<string>('REFRESH_TOKEN_TTL_DAYS')) *
-      MS_PER_DAY;
+      +configService.getOrThrow<string>('REFRESH_TOKEN_TTL_DAYS') * MS_PER_DAY;
   }
 
   /**

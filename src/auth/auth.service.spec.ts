@@ -5,9 +5,9 @@ import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { AuthService } from '@/features/auth/auth.service';
-import { RefreshToken } from '@/features/auth/entities/refresh-token.entity';
-import { User } from '@/features/users/entities/user.entity';
+import { AuthService } from '@/auth/auth.service';
+import { RefreshToken } from '@/auth/entities/refresh-token.entity';
+import { User } from '@/users/entities/user.entity';
 
 const createRecord = (value: Partial<RefreshToken>): object => ({
   ...value,

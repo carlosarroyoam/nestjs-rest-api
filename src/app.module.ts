@@ -3,9 +3,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from '@/app.controller';
+import { AuthModule } from '@/auth/auth.module';
 import { CoreModule } from '@/core/core.module';
-import { AuthModule } from '@/features/auth/auth.module';
-import { UserModule } from '@/features/users/user.module';
+import { UserModule } from '@/users/user.module';
 
 /** Módulo raíz: carga la configuración, conecta MySQL e importa los módulos. */
 @Module({

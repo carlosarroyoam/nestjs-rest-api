@@ -4,13 +4,13 @@ import { JwtModule, JwtSignOptions } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AuthController } from '@/features/auth/auth.controller';
-import { AuthService } from '@/features/auth/auth.service';
-import { RefreshToken } from '@/features/auth/entities/refresh-token.entity';
-import { JwtAuthGuard } from '@/features/auth/guards/jwt-guard';
-import { JwtStrategy } from '@/features/auth/strategies/jwt.strategy';
-import { LocalStrategy } from '@/features/auth/strategies/local.strategy';
-import { User } from '@/features/users/entities/user.entity';
+import { AuthController } from '@/auth/auth.controller';
+import { AuthService } from '@/auth/auth.service';
+import { RefreshToken } from '@/auth/entities/refresh-token.entity';
+import { JwtAuthGuard } from '@/auth/guards/jwt-guard';
+import { JwtStrategy } from '@/auth/strategies/jwt.strategy';
+import { LocalStrategy } from '@/auth/strategies/local.strategy';
+import { User } from '@/users/entities/user.entity';
 
 /** Módulo de autenticación: configura JWT y las estrategias de Passport. */
 @Module({

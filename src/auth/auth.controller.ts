@@ -10,14 +10,14 @@ import {
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { AuthService } from '@/features/auth/auth.service';
-import { LoginResponseDto } from '@/features/auth/dto/login-response.dto';
-import { LoginDto } from '@/features/auth/dto/login.dto';
-import { LogoutDto } from '@/features/auth/dto/logout.dto';
-import { RefreshResponseDto } from '@/features/auth/dto/refresh-response.dto';
-import { RefreshTokenDto } from '@/features/auth/dto/refresh-token.dto';
-import { LocalAuthGuard } from '@/features/auth/guards/local-guard';
-import type { AuthenticatedRequest } from '@/features/auth/interfaces/authenticated-request.interface';
+import { AuthService } from '@/auth/auth.service';
+import { LoginResponseDto } from '@/auth/dto/login-response.dto';
+import { LoginDto } from '@/auth/dto/login.dto';
+import { LogoutDto } from '@/auth/dto/logout.dto';
+import { RefreshResponseDto } from '@/auth/dto/refresh-response.dto';
+import { RefreshTokenDto } from '@/auth/dto/refresh-token.dto';
+import { LocalAuthGuard } from '@/auth/guards/local-guard';
+import type { AuthenticatedRequest } from '@/auth/interfaces/authenticated-request.interface';
 
 /** Endpoints de autenticación, en `/auth`. */
 @Controller('auth')

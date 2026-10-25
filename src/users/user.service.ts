@@ -9,22 +9,26 @@ import * as bcrypt from 'bcrypt';
 import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
 
-import { CreateUserDto } from '@/features/users/dto/create-user.dto';
-import { UpdateUserDto } from '@/features/users/dto/update-user.dto';
-import { UserDto } from '@/features/users/dto/user.dto';
-import { Role } from '@/features/users/entities/role.entity';
-import { User } from '@/features/users/entities/user.entity';
+import { CreateUserDto } from '@/users/dto/create-user.dto';
+import { UpdateUserDto } from '@/users/dto/update-user.dto';
+import { UserDto } from '@/users/dto/user.dto';
+import { Role } from '@/users/entities/role.entity';
+import { User } from '@/users/entities/user.entity';
 
 /** Lógica de negocio de los usuarios: consulta, alta, actualización y baja. */
 @Injectable()
 export class UserService {
+  private readonly saltRounds: number;
+
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(Role)
     private readonly roleRepository: Repository<Role>,
-    private readonly configService: ConfigService,
-  ) {}
+    configService: ConfigService,
+  ) {
+    this.saltRounds = +configService.getOrThrow<string>('SALT_ROUNDS');
+  }
 
   /**
    * Obtiene todos los usuarios, ordenados por `id` ascendente.
@@ -73,7 +77,7 @@ export class UserService {
     await this.ensureUsernameIsUnique(request.username);
     await this.ensureEmailIsUnique(request.email);
 
-    const role = await this.findRoleByIdOrFail(request.roleId);
+    const role = await this.findRoleById(request.roleId);
     const now = new Date();
 
     const user = new User();
@@ -124,7 +128,7 @@ export class UserService {
     }
 
     if (roleId !== undefined) {
-      user.role = await this.findRoleByIdOrFail(roleId);
+      user.role = await this.findRoleById(roleId);
     }
 
     user.updatedAt = now;
@@ -157,7 +161,7 @@ export class UserService {
    * @returns El rol encontrado.
    * @throws BadRequestException Si no existe un rol con ese `id`.
    */
-  private async findRoleByIdOrFail(roleId: number): Promise<Role> {
+  private async findRoleById(roleId: number): Promise<Role> {
     const role = await this.roleRepository.findOneBy({ id: roleId });
     if (!role) {
       throw new BadRequestException('Role not found');
@@ -197,9 +201,6 @@ export class UserService {
    * @returns El hash resultante.
    */
   private hashPassword(password: string): Promise<string> {
-    return bcrypt.hash(
-      password,
-      Number(this.configService.getOrThrow<string>('SALT_ROUNDS')),
-    );
+    return bcrypt.hash(password, this.saltRounds);
   }
 }

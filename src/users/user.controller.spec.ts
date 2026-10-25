@@ -1,8 +1,8 @@
 import { ForbiddenException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { UserController } from '@/features/users/user.controller';
-import { UserService } from '@/features/users/user.service';
+import { UserController } from '@/users/user.controller';
+import { UserService } from '@/users/user.service';
 
 describe('UserController', () => {
   let controller: UserController;

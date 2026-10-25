@@ -12,14 +12,14 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { CurrentUser } from '@/features/auth/decorators/current-user.decorator';
-import { JwtAuthGuard } from '@/features/auth/guards/jwt-guard';
-import type { AuthenticatedUser } from '@/features/auth/interfaces/authenticated-user.interface';
-import { CreateUserDto } from '@/features/users/dto/create-user.dto';
-import { UpdateUserDto } from '@/features/users/dto/update-user.dto';
-import { UserDto } from '@/features/users/dto/user.dto';
-import { ADMIN_ROLE } from '@/features/users/entities/role.entity';
-import { UserService } from '@/features/users/user.service';
+import { CurrentUser } from '@/auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from '@/auth/guards/jwt-guard';
+import type { AuthenticatedUser } from '@/auth/interfaces/authenticated-user.interface';
+import { CreateUserDto } from '@/users/dto/create-user.dto';
+import { UpdateUserDto } from '@/users/dto/update-user.dto';
+import { UserDto } from '@/users/dto/user.dto';
+import { ADMIN_ROLE } from '@/users/entities/role.entity';
+import { UserService } from '@/users/user.service';
 
 /** Endpoints REST de usuarios, en `/users`. Requieren un token JWT válido. */
 @Controller('/users')

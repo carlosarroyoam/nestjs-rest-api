@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
-import { AuthenticatedUser } from '@/features/auth/interfaces/authenticated-user.interface';
+import { AuthenticatedUser } from '@/auth/interfaces/authenticated-user.interface';
 
 /** Guard que exige un token JWT válido, validado con `JwtStrategy`. */
 @Injectable()

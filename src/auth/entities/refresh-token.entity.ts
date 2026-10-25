@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { User } from '@/features/users/entities/user.entity';
+import { User } from '@/users/entities/user.entity';
 
 /** Refresh token de un dispositivo. Tabla `refresh_tokens`. */
 @Entity({ name: 'refresh_tokens' })

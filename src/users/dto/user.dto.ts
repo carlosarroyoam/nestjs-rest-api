@@ -1,6 +1,6 @@
 import { Expose, Type } from 'class-transformer';
 
-import { RoleDto } from '@/features/users/dto/role.dto';
+import { RoleDto } from '@/users/dto/role.dto';
 
 /** Representación pública de un usuario en las respuestas de la API. */
 export class UserDto {

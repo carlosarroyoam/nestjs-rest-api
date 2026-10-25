@@ -2,9 +2,9 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Role } from '@/features/users/entities/role.entity';
-import { User } from '@/features/users/entities/user.entity';
-import { UserService } from '@/features/users/user.service';
+import { Role } from '@/users/entities/role.entity';
+import { User } from '@/users/entities/user.entity';
+import { UserService } from '@/users/user.service';
 
 describe('UserService', () => {
   let service: UserService;
